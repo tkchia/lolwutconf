@@ -37,18 +37,33 @@ conf__cxxc_find_cross_compiler() {
 	cxxflags_var="$3"
 	eval "cxxflags=\"\$$cxxflags_var\""
 	case "$cross_tag" in
-	    i[3456]86-*)
+	    i[3456]86-* | pentium[^4]* | k6-* | athlon-[^f]* | winchip* | \
+	    c3-* | geode-*)
 		if conf__app_exists "${cross_tag}-g++"; then
 			cxx="${cross_tag}-g++"
 		else
 			save_ifs="$IFS"
 			IFS=-
 			set '--' $cross_tag
-			arch="$1"
-			shift
+			case "$1-$2" in
+			    pentium-mmx | pentium-m | k6-[23] | \
+			    athlon-tbird | athlon-4 | athlon-[xm]p | \
+			    winchip-c6 | c3-2)
+				arch="$1-$2"
+				shift 2;;
+			    *)
+				arch="$1"
+				shift;;
+			esac
 			rest="$*"
 			IFS="$save_ifs"
-			cxx="x86_64-$rest-g++"
+			if conf__app_exists "i686-$rest-g++"; then
+				cxx="i686-$rest-g++"
+			elif conf__app_exists "i386-$rest-g++"; then
+				cxx="i386-$rest-g++"
+			else
+				cxx="x86_64-$rest-g++"
+			fi
 			cxxflags="-m32 -march=$arch $cxxflags"
 		fi;;
 	    armv[45678]*)

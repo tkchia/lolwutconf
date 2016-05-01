@@ -1,1 +1,8 @@
+2016-05-01	More x86-32 CPU types recognized.
+
+		c++.common.inc :
+		- now recognizes a few more specific CPU types for x86-32
+		- now also looks for `i686-*-g++' and `i386-*-g++', in
+		  addition to `x86_64-*-g++', when compiling for x86-32
+
 2016-03-27	Split from biting-pear GitHub repository.
