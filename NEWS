@@ -1,3 +1,14 @@
+2016-05-21	Target-side functions.
+
+		c++.common.inc :
+		- added conf__cxxc_probe_func()
+
+		c++.inc :
+		- rewrote conf_cxx_probe_func() to use conf__cxxc_probe_func()
+
+		c++.target.inc :
+		- added conf_cxxt_probe_func() and conf_cxxt_probe_impld_func()
+
 2016-05-01	More x86-32 CPU types recognized.
 
 		c++.common.inc :

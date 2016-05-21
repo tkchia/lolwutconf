@@ -297,7 +297,7 @@ conf_cxxt_probe_overridable_csu_init() {
 	if conf__in_help_mode
 		then return 0; fi
 	conf__add_var conf_Have_overridable_csu_init_cxxt
-	conf__blare_test "checking if target's __libc_csu_init overridable"
+	conf__blare_test "checking if target's __libc_csu_init is overridable"
 	prog="`conf__mktemp lolwutconf`"
 	#
 	# Although we only want to override __libc_csu_init(...), we need to
@@ -385,4 +385,57 @@ conf_cxxt_probe_ctor_priority() {
 	fi
 	rm -f "$prog"
 	conf__blare_res "$conf_Have_ctor_priority_cxxt"
+}
+
+conf_cxxt_probe_func() {
+	local func n_args var
+	conf_cxxt_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	func="$1"
+	n_args="$2"
+	shift 2
+	var="conf_Have_cxxt_func_`echo "$func" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	conf__cxxc_probe_func target "$CXX_FOR_TARGET" \
+	    "$CPPFLAGS_FOR_TARGET" "$CXXFLAGS_FOR_TARGET" \
+	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    "$func" "$n_args" "$var" ${1+"$@"}
+}
+
+conf_cxxt_probe_impld_func() {
+	local func n_args args err_rv f_var i_var prog
+	conf_cxxt_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	func="$1"
+	n_args="$2"
+	args="$3"
+	err_rv="$4"
+	shift 4
+	conf_cxxt_probe_func "$func" "$n_args" ${1+"$@"}
+	f_var="conf_Have_cxxt_func_`echo "$func" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	i_var="conf_Have_cxxt_impld_func_`echo "$func" | \
+	    sed 's/[^a-zA-Z0-9]/_/g'`"
+	if eval test no = \"$$f_var\"; then
+		eval $i_var=no
+		return 0
+	fi
+	conf__blare_test \
+	    "testing if target-side C++ function $func is implemented"
+	prog="`conf__mktemp lolwutconf`"
+	if conf__cxxt_compile_prog "$prog" \
+	    "#include <errno.h>" \
+	    ${1+"$@"} \
+	    "int main() {" \
+	    "  errno = 0;" \
+	    "  if ($func($args) == ($err_rv) && errno == ENOSYS)" \
+	    "    return 1;" \
+	    "  return 0;" \
+	    "}" && \
+	    $conf_Target_exec ./"$prog"
+	then	eval $i_var=yes
+	else	eval $i_var=no
+	fi
+	rm -f "$prog"
+	eval conf__blare_res \"\$$i_var\"
 }

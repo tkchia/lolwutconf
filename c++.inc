@@ -116,7 +116,7 @@ conf_cxx_chk_typ() {
 }
 
 conf_cxx_probe_func() {
-	local func n_args var templ proto args i
+	local func n_args var
 	conf_cxx_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
@@ -124,33 +124,9 @@ conf_cxx_probe_func() {
 	n_args="$2"
 	shift 2
 	var="conf_Have_cxx_func_`echo "$func" | sed 's/[^a-zA-Z0-9]/_/g'`"
-	if eval test -n \"\$$var\"
-		then return 0; fi
-	conf__add_var "$var"
-	conf__blare_test "testing for host-side C++ function $func"
-	templ=
-	proto=
-	args=
-	if test 0 = "$n_args"; then
-		templ=
-		proto=
-		args=
-	else
-		templ='class T1'
-		proto='T1 x1'
-		args='x1'
-		for i in `seq 2 "$n_args"`; do
-			templ="$templ,class T$i"
-			proto="$proto,T$i x$i"
-			args="$args,x$i"
-		done
-	fi
-	if conf__cxx_chk_compiler_with "$CXXFLAGS" "$LDLIBS" ${1+"$@"} \
-	    "template<$templ> void conf_foo($proto) { $func($args); }"
-	then	eval $var=yes
-	else	eval $var=no
-	fi
-	eval conf__blare_res \"\$$var\"
+	conf__cxxc_probe_func host "$CXX" "$CPPFLAGS" "$CXXFLAGS" \
+	    "$LDFLAGS" "$LDLIBS" "$conf_Host_exec" "$func" "$n_args" "$var" \
+	    ${1+"$@"}
 }
 
 conf_cxx_probe_lib() {
