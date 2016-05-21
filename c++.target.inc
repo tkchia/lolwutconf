@@ -416,6 +416,7 @@ conf_cxxt_probe_impld_func() {
 	f_var="conf_Have_cxxt_func_`echo "$func" | sed 's/[^a-zA-Z0-9]/_/g'`"
 	i_var="conf_Have_cxxt_impld_func_`echo "$func" | \
 	    sed 's/[^a-zA-Z0-9]/_/g'`"
+	conf__add_var $i_var
 	if eval test no = \"$$f_var\"; then
 		eval $i_var=no
 		return 0
