@@ -440,3 +440,26 @@ conf_cxxt_probe_impld_func() {
 	rm -f "$prog"
 	eval conf__blare_res \"\$$i_var\"
 }
+
+#
+# This is useful for constants which may not be defined as preprocessor
+# macros.  <linux/sysctl.h> e.g. has CTL_KERN as an `enum' value.
+#
+conf_cxxt_probe_const() {
+	local const var
+	conf_cxxt_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	const="$1"
+	shift
+	var="conf_Have_cxxt_const_`echo "$const" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	conf__add_var "$var"
+	conf__blare_test "testing for target-side C++ constant $const"
+	if conf__cxxt_chk_compiler_with "$CXXFLAGS_FOR_TARGET" \
+	    "$LDFLAGS_FOR_TARGET" ${1+"$@"} \
+	    "int foo(void) { return (int)($const); }"
+	then	eval $var=yes
+	else	eval $var=no
+	fi
+	eval conf__blare_res \"\$$var\"
+}
