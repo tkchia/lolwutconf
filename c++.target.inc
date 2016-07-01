@@ -116,7 +116,7 @@ conf_cxxt_probe_typ() {
 		then return 0; fi
 	typ="$1"
 	shift
-	var="conf_Have_cxxt_typ_`echo "$typ" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	var="conf_Have_cxxt_typ_`conf__escape "$typ"`"
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
@@ -137,8 +137,7 @@ conf_cxxt_probe_lib() {
 	family="$1"
 	libs="$2"
 	shift 2
-	var="conf_Have_cxxt_lib_`echo "$family" | \
-	    sed 's/[^a-zA-Z0-9]/_/g'`"
+	var="conf_Have_cxxt_lib_`conf__escape "$family"`"
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
@@ -395,7 +394,7 @@ conf_cxxt_probe_func() {
 	func="$1"
 	n_args="$2"
 	shift 2
-	var="conf_Have_cxxt_func_`echo "$func" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	var="conf_Have_cxxt_func_`conf__escape "$func"`"
 	conf__cxxc_probe_func target "$CXX_FOR_TARGET" \
 	    "$CPPFLAGS_FOR_TARGET" "$CXXFLAGS_FOR_TARGET" \
 	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
@@ -413,9 +412,8 @@ conf_cxxt_probe_impld_func() {
 	err_rv="$4"
 	shift 4
 	conf_cxxt_probe_func "$func" "$n_args" ${1+"$@"}
-	f_var="conf_Have_cxxt_func_`echo "$func" | sed 's/[^a-zA-Z0-9]/_/g'`"
-	i_var="conf_Have_cxxt_impld_func_`echo "$func" | \
-	    sed 's/[^a-zA-Z0-9]/_/g'`"
+	f_var="conf_Have_cxxt_func_`conf__escape "$func"`"
+	i_var="conf_Have_cxxt_impld_func_`conf__escape "$func"`"
 	conf__add_var $i_var
 	if eval test no = \"$$f_var\"; then
 		eval $i_var=no
@@ -452,7 +450,7 @@ conf_cxxt_probe_const() {
 		then return 0; fi
 	const="$1"
 	shift
-	var="conf_Have_cxxt_const_`echo "$const" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	var="conf_Have_cxxt_const_`conf__escape "$const"`"
 	conf__add_var "$var"
 	conf__blare_test "testing for target-side C++ constant $const"
 	if conf__cxxt_chk_compiler_with "$CXXFLAGS_FOR_TARGET" \

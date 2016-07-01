@@ -95,7 +95,7 @@ conf_cxx_probe_typ() {
 		then return 0; fi
 	typ="$1"
 	shift
-	var="conf_Have_cxx_typ_`echo "$typ" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	var="conf_Have_cxx_typ_`conf__escape "$typ"`"
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
@@ -123,7 +123,7 @@ conf_cxx_probe_func() {
 	func="$1"
 	n_args="$2"
 	shift 2
-	var="conf_Have_cxx_func_`echo "$func" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	var="conf_Have_cxx_func_`conf__escape "$func"`"
 	conf__cxxc_probe_func host "$CXX" "$CPPFLAGS" "$CXXFLAGS" \
 	    "$LDFLAGS" "$LDLIBS" "$conf_Host_exec" "$func" "$n_args" "$var" \
 	    ${1+"$@"}
@@ -137,7 +137,7 @@ conf_cxx_probe_lib() {
 	family="$1"
 	libs="$2"
 	shift 2
-	var="conf_Have_cxx_lib_`echo "$family" | sed 's/[^a-zA-Z0-9]/_/g'`"
+	var="conf_Have_cxx_lib_`conf__escape "$family"`"
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"

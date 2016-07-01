@@ -1,3 +1,16 @@
+2016-07-01	Now unambiguously "escapes" C++ names embedded in shell
+		variable names.
+
+		escape.awk :
+		- initial version
+
+		configure.inc :
+		- added conf__escape(), which uses escape.awk
+
+		c++.inc ,
+		c++.target.inc :
+		- now uses conf__escape()
+
 2016-05-22	Target-side constants.
 
 		c++.target.inc :
