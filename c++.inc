@@ -89,7 +89,7 @@ conf_cxx_probe_cxx11() {
 }
 
 conf_cxx_probe_typ() {
-	local typ var
+	local typ var yn
 	conf_cxx_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
@@ -102,17 +102,46 @@ conf_cxx_probe_typ() {
 	conf__blare_test "testing for host-side C++ type $typ"
 	if conf__cxx_chk_compiler_with "$CXXFLAGS" "$LDLIBS" ${1+"$@"} \
 	    "typedef $typ conf_foo_t;"
-	then	eval $var=yes
-	else	eval $var=no
+	then	yn=yes
+	else	yn=no
 	fi
-	eval conf__blare_res \"\$$var\"
+	eval $var=\$yn
+	conf__blare_res $yn
 }
 
 conf_cxx_chk_typ() {
-	if conf_cxx_probe_typ ${1+"$@"}
-	then	:
-	else	conf__barf "type $1 not found!"
+	local var typ
+	typ="$1"
+	conf_cxx_probe_typ ${1+"$@"}
+	var="conf_Have_cxx_typ_`conf__escape "$typ"`"
+	if eval test yes = \"\$$var\"; then :; else
+		conf__barf "type $1 not found!"; fi
+}
+
+conf_cxx_probe_asm_goto() {
+	local prog
+	conf_cxx_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	if test -n "$conf_Have_asm_goto_cxx"
+		then return 0; fi
+	conf__add_var conf_Have_asm_goto_cxx
+	conf__blare_test \
+	    "checking if host supports __asm goto(...)"
+	prog="`conf__mktemp lolwutconf`"
+	if conf__cxx_compile_prog "$prog" \
+	    'int main() {' \
+	    '  __asm goto("" : : : : foo);' \
+	    '  return 0;' \
+	    'foo:' \
+	    '  return 1;' \
+	    '}' && \
+	    $conf_Host_exec ./"$prog"
+	then    conf_Have_asm_goto_cxx=yes
+	else    conf_Have_asm_goto_cxx=no
 	fi
+	rm -f "$prog"
+	conf__blare_res "$conf_Have_asm_goto_cxx"
 }
 
 conf_cxx_probe_func() {

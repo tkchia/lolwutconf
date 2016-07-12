@@ -157,10 +157,12 @@ conf_cxxt_probe_lib() {
 }
 
 conf_cxxt_chk_typ() {
-	if conf_cxxt_probe_typ ${1+"$@"}
-	then	:
-	else	conf__barf "type $1 not found!"
-	fi
+	local var typ
+	typ="$1"
+	conf_cxxt_probe_typ ${1+"$@"}
+	var="conf_Have_cxxt_typ_`conf__escape "$typ"`"
+	if eval test yes = \"\$$var\"; then :; else
+		conf__barf "type $1 not found!"; fi
 }
 
 conf_cxxt_probe_endianness() {
@@ -384,6 +386,32 @@ conf_cxxt_probe_ctor_priority() {
 	fi
 	rm -f "$prog"
 	conf__blare_res "$conf_Have_ctor_priority_cxxt"
+}
+
+conf_cxxt_probe_asm_goto() {
+	local prog
+	conf_cxxt_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	if test -n "$conf_Have_asm_goto_cxxt"
+		then return 0; fi
+	conf__add_var conf_Have_asm_goto_cxxt
+	conf__blare_test \
+	    "checking if target supports __asm goto(...)"
+	prog="`conf__mktemp lolwutconf`"
+	if conf__cxxt_compile_prog "$prog" \
+	    'int main() {' \
+	    '  __asm goto("" : : : : foo);' \
+	    '  return 0;' \
+	    'foo:' \
+	    '  return 1;' \
+	    '}' && \
+	    $conf_Target_exec ./"$prog"
+	then	conf_Have_asm_goto_cxxt=yes
+	else	conf_Have_asm_goto_cxxt=no
+	fi
+	rm -f "$prog"
+	conf__blare_res "$conf_Have_asm_goto_cxxt"
 }
 
 conf_cxxt_probe_func() {

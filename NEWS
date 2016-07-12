@@ -1,3 +1,22 @@
+2016-07-12	"Don't panic."
+
+		configure.inc :
+		- now checks if running under `bash' in POSIX mode
+		- fixed list of environment variables for `--help'
+
+		c++.inc :
+		- added conf_cxx_probe_asm_goto()
+		- fixed conf_cxx_chk_typ() to not depend on the exit status
+		  of conf_cxx_probe_typ() (which should always be 0)
+		- tweaked conf_cxx_probe_typ() to use `eval' a bit less
+
+		c++.target.inc :
+		- added conf_cxxt_probe_asm_goto()
+		- fixed conf_cxxt_chk_typ()
+
+		escape.awk :
+		- now escapes ` ' character as `_b'
+
 2016-07-06	"There's no sense in trying to learn Martian over the phone."
 
 		app.inc :

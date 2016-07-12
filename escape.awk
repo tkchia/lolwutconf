@@ -13,6 +13,7 @@ BEGIN {
 	gsub(/\./, "_d")
 	gsub(/\+/, "_p")
 	gsub(/-/, "_m")
+	gsub(/ /, "_b")
 	if (/^<.*>$/)
 		$0 = "_i" substr($0, 2, length($0) - 2)
 	gsub(/\//, "_s")

@@ -39,7 +39,15 @@ conf__check_general_sanity() {
 		fi
 	done
 	if test ab = "`echo -n a; echo b`"; then :; else
-		conf__barf "\`echo' does not understand \`-n'!"; fi
+		#
+		# `bash' invoked as `sh' enters POSIX mode, which does not
+		# recognize `-n'.  Try to test if we are in fact running
+		# under `bash'.  If we are, disable POSIX mode.
+		#
+		if test -z "$BASH" || (unset SHELLOPTS 2>/dev/null); then
+			conf__barf "\`echo' does not understand \`-n'!"; fi
+		set +o posix
+	fi
 	if test _ = "`echo z | sed s/[[:alpha:]]/_/g`"; then :; else
 		conf__barf \
 		    "\`sed' does not understand POSIX character classes!"; fi
@@ -312,8 +320,11 @@ conf_begin() {
 		    *)	conf_Mode=help;;
 		esac
 	done
-	if conf__in_help_mode
-		then return 0; fi
+	if conf__in_help_mode; then
+		conf_Use_vars=' '
+	else
+		conf_Use_vars=' conf_Srcdir conf_Prefix conf_Target_prefix '
+	fi
 }
 
 conf_mod() {
