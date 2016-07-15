@@ -232,8 +232,7 @@ conf_cxxt_probe_var_tpls()
 	conf__blare_res "$conf_Have_cxxt_var_tpls"
 }
 
-conf_cxxt_probe_decltype()
-{
+conf_cxxt_probe_decltype() {
 	conf_cxxt_probe_cxx11
 	if conf__in_help_mode
 		then return 0; fi
@@ -488,4 +487,58 @@ conf_cxxt_probe_const() {
 	else	eval $var=no
 	fi
 	eval conf__blare_res \"\$$var\"
+}
+
+conf_cxxt_probe_const_val() {
+	local const var prog val
+	const="$1"
+	shift
+	conf_cxxt_probe_const "$const" ${1+"$@"}
+	if conf__in_help_mode
+		then return 0; fi
+	var="conf_Have_cxxt_const_`conf__escape "$const"`"
+	if eval test no = \"\$$var\"
+		then return 0; fi
+	var="conf_Val_cxxt_const_`conf__escape "$const"`"
+	conf__add_var "$var"
+	conf__blare_test "getting value of target-side C++ constant $const"
+	prog="`conf__mktemp lolwutconf`"
+	if test yes = "$conf_Have_cxxt_typeid"
+	then	have_typeid=1
+	else	have_typeid=0
+	fi
+	if conf__cxxt_compile_prog "$prog" \
+	    ${1+"$@"} \
+	    "#include <cinttypes>" \
+	    "#include <climits>" \
+	    "#include <iostream>" \
+	    "#include <iomanip>" \
+	    "#include <type_traits>" \
+	    "int main() {" \
+	    "  auto c = ($const);" \
+	    "  if (!std::is_integral<__typeof(c)>::value &&" \
+	    "      !std::is_enum<__typeof(c)>::value)" \
+	    "    return 0;" \
+	    "  std::cout << std::hex;" \
+	    "  if (c >= CHAR_MIN && c <= UCHAR_MAX)" \
+	    "    std::cout << \"0x\" << (int)c;" \
+	    "  else if (c >= 0)" \
+	    "    std::cout << \"0x\" << c;" \
+	    "  else if (c == INTMAX_MIN)" \
+	    "    std::cout << \"(-1-0x\" << (-1 - INTMAX_MIN) << ')';" \
+	    "  else" \
+	    "    std::cout << \"(-0x\" << (-c) << ')';" \
+	    "  std::cout << std::endl;" \
+	    "  return 0;" \
+	    "}"
+	then	val="`$conf_Target_exec ./"$prog"`"
+	else	val=
+	fi
+	rm -f "$prog"
+	if test -z "$val"; then
+		conf__blare_res '(?!?)'
+		conf__barf "cannot get value of $const!"
+	fi
+	eval $var=\"\$val\"
+	conf__blare_res "$val"
 }
