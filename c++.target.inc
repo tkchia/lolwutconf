@@ -490,10 +490,11 @@ conf_cxxt_probe_const() {
 }
 
 conf_cxxt_probe_const_val() {
-	local const var prog val
+	local const var prog val use_cinttypes
 	const="$1"
 	shift
 	conf_cxxt_probe_const "$const" ${1+"$@"}
+	conf_cxxt_probe_typ std::intmax_t '#include <cinttypes>'
 	if conf__in_help_mode
 		then return 0; fi
 	var="conf_Have_cxxt_const_`conf__escape "$const"`"
@@ -503,31 +504,40 @@ conf_cxxt_probe_const_val() {
 	conf__add_var "$var"
 	conf__blare_test "getting value of target-side C++ constant $const"
 	prog="`conf__mktemp lolwutconf`"
-	if test yes = "$conf_Have_cxxt_typeid"
-	then	have_typeid=1
-	else	have_typeid=0
+	if test yes = "$conf_Have_cxxt_typ_std_0intmax_t"
+	then	use_cinttypes=1
+	else	use_cinttypes=0
 	fi
 	if conf__cxxt_compile_prog "$prog" \
 	    ${1+"$@"} \
-	    "#include <cinttypes>" \
+	    "#if $use_cinttypes" \
+	    "# include <cinttypes>" \
+	    "#else" \
+	    "# include <inttypes.h>" \
+	    "#endif" \
 	    "#include <climits>" \
 	    "#include <iostream>" \
 	    "#include <iomanip>" \
 	    "#include <type_traits>" \
 	    "int main() {" \
+	    "#if $use_cinttypes" \
+	    "  using std::intmax_t;" \
+	    "#endif" \
 	    "  auto c = ($const);" \
 	    "  if (!std::is_integral<__typeof(c)>::value &&" \
 	    "      !std::is_enum<__typeof(c)>::value)" \
 	    "    return 0;" \
 	    "  std::cout << std::hex;" \
-	    "  if (c >= CHAR_MIN && c <= UCHAR_MAX)" \
+	    "  if (c >= CHAR_MIN && c < 0)" \
+	    "    std::cout << \"-0x\" << (int)(-c);" \
+	    "  else if (c >= 0 && c <= UCHAR_MAX)" \
 	    "    std::cout << \"0x\" << (int)c;" \
 	    "  else if (c >= 0)" \
 	    "    std::cout << \"0x\" << c;" \
 	    "  else if (c == INTMAX_MIN)" \
 	    "    std::cout << \"(-1-0x\" << (-1 - INTMAX_MIN) << ')';" \
 	    "  else" \
-	    "    std::cout << \"(-0x\" << (-c) << ')';" \
+	    "    std::cout << \"(-0x\" << (-(intmax_t)c) << ')';" \
 	    "  std::cout << std::endl;" \
 	    "  return 0;" \
 	    "}"
