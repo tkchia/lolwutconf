@@ -115,7 +115,25 @@ conf_cxx_chk_typ() {
 	conf_cxx_probe_typ ${1+"$@"}
 	var="conf_Have_cxx_typ_`conf__escape "$typ"`"
 	if eval test yes = \"\$$var\"; then :; else
-		conf__barf "type $1 not found!"; fi
+		conf__barf "type $1 not found host-side!"; fi
+}
+
+conf_cxx_chk_typ_1_of() {
+	local var typ foo
+	test $# -ne 0
+	foo=no
+	for typ in "$@"; do
+		var="conf_Have_cxx_typ_`conf__escape "$typ"`"
+		if eval test yes = \"\$$var\"
+			then foo=yes; fi
+	done
+	if test yes = "$foo"; then :; else
+		foo="$1"
+		shift
+		for typ in ${1+"$@"}
+			do foo="$foo, $typ"; done
+		conf__barf "none of the types {$foo} are found host-side!"
+	fi
 }
 
 conf_cxx_probe_asm_goto() {

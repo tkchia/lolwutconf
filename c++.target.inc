@@ -162,7 +162,25 @@ conf_cxxt_chk_typ() {
 	conf_cxxt_probe_typ ${1+"$@"}
 	var="conf_Have_cxxt_typ_`conf__escape "$typ"`"
 	if eval test yes = \"\$$var\"; then :; else
-		conf__barf "type $1 not found!"; fi
+		conf__barf "type $1 not found target-side!"; fi
+}
+
+conf_cxxt_chk_typ_1_of() {
+	local var typ foo
+	test $# -ne 0
+	foo=no
+	for typ in "$@"; do
+		var="conf_Have_cxxt_typ_`conf__escape "$typ"`"
+		if eval test yes = \"\$$var\"
+			then foo=yes; fi
+	done
+	if test yes = "$foo"; then :; else
+		foo="$1"
+		shift
+		for typ in ${1+"$@"}
+			do foo="$foo, $typ"; done
+		conf__barf "none of the types {$foo} are found target-side!"
+	fi
 }
 
 conf_cxxt_probe_endianness() {
