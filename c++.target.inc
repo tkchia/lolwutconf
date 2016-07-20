@@ -17,7 +17,7 @@ conf__cxxt_chk_compiler_with() {
 }
 
 conf__cxxt_compile_prog() {
-	local prog
+	local prog res
 	conf_cxxt_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
@@ -28,6 +28,7 @@ conf__cxxt_compile_prog() {
 		for line in ${1+"$@"}
 			do echo "$line"; done
 	) >"$src"
+	res=0
 	$conf_Host_exec $CXX_FOR_TARGET $CPPFLAGS_FOR_TARGET \
 	    $CXXFLAGS_FOR_TARGET $LDFLAGS_FOR_TARGET -o"$prog" "$src" \
 	    $LDLIBS_FOR_TARGET >/dev/null 2>&1 || res=1
@@ -107,6 +108,15 @@ conf_cxxt_probe_cxx11() {
 	done
 	conf__blare_res '(failed; continuing)'
 	conf_Have_cxxt_cxx11_compiler=no
+}
+
+conf_cxxt_probe_opt_wrapper() {
+	conf_cxxt_chk_compiler_and_executor
+	conf__cxxc_probe_opt_wrapper target \
+	    "$conf_Host_exec $CXX_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
+	    "$CXXFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    conf_Have_cxxt_opt_wrapper
 }
 
 conf_cxxt_probe_typ() {

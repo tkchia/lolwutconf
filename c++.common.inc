@@ -179,6 +179,48 @@ conf__cxxc_probe_thumb() {
 	fi
 }
 
+conf__cxxc_probe_opt_wrapper() {
+	local plat cxx cppflags cxxflags ldflags ldlibs execor var \
+	    wrapper holder token got_token
+	plat="$1"
+	cxx="$2"
+	cppflags="$3"
+	cxxflags="$4"
+	ldflags="$5"
+	ldlibs="$6"
+	execor="$7"
+	var="$8"
+	shift 8
+	if eval test -n \"\$$var\"
+		then return 0; fi
+	conf__add_var "$var"
+	conf__blare_test \
+	    "checking if $plat-side C++ compiler supports -wrapper"
+	wrapper="`conf__mktemp ./lolwutconf`"
+	holder="`conf__mktemp lolwutconf`"
+	token="$RANDOM"
+	case "$token" in
+	    *[^0123456789]*) token=;; esac
+	token="w00tw00tw00t$token"
+	(
+		echo '#!/bin/sh'
+		echo "echo $token >$holder"
+		echo 'exec ${1+"$@"}'
+	) >"$wrapper"
+	chmod u+x "$wrapper"
+	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" \
+	    "$cxxflags -wrapper $wrapper" "$ldflags" "$ldlibs" "$execor" \
+	    ${1+"$@"} && \
+	   read got_token <"$holder" && \
+	   "$token" = "$got_token"; then
+		eval $var=yes
+	else
+		eval $var=no
+	fi
+	rm -f "$wrapper" "$holder"
+	eval conf__blare_res \"\$$var\"
+}
+
 conf__cxxc_probe_func() {
 	local plat cxx cppflags cxxflags ldflags ldlibs execor func n_args \
 	    var templ proto args i

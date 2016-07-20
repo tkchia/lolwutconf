@@ -1,3 +1,18 @@
+2016-07-20	Check for -wrapper, and a bit more.
+
+		c++.inc :
+		- fixed return status handling in conf__cxx_compile_prog()
+
+		c++.target.inc :
+		- fixed return status handling in conf__cxxt_compile_prog()
+		- added conf_cxxt_probe_opt_wrapper()
+
+		c++.common.inc :
+		- added conf__cxxc_probe_opt_wrapper(), used by c++.target.inc
+
+		configure :
+		- added `chmod' to list of programs to check for
+
 2016-07-19	"With your bare hands?!?"
 
 		c++.inc :

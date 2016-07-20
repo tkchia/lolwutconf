@@ -15,7 +15,7 @@ conf__cxx_chk_compiler_with() {
 }
 
 conf__cxx_compile_prog() {
-	local prog
+	local prog res
 	conf_cxx_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
@@ -26,6 +26,7 @@ conf__cxx_compile_prog() {
 		for line in ${1+"$@"}
 			do echo "$line"; done
 	) >"$src"
+	res=0
 	$CXX $CPPFLAGS $CXXFLAGS $LDFLAGS -o"$prog" "$src" $LDLIBS \
 	    >/dev/null 2>&1 || res=1
 	rm -f "$src"
