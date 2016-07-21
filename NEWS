@@ -1,3 +1,8 @@
+2016-07-21	Check for -wrapper, and a bit more.  (2)
+
+		c++.common.inc :
+		- fixed bug in conf__cxxc_probe_opt_wrapper() in token test
+
 2016-07-20	Check for -wrapper, and a bit more.
 
 		c++.inc :

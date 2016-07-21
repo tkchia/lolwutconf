@@ -212,7 +212,7 @@ conf__cxxc_probe_opt_wrapper() {
 	    "$cxxflags -wrapper $wrapper" "$ldflags" "$ldlibs" "$execor" \
 	    ${1+"$@"} && \
 	   read got_token <"$holder" && \
-	   "$token" = "$got_token"; then
+	   test "$token" = "$got_token"; then
 		eval $var=yes
 	else
 		eval $var=no
