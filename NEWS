@@ -1,6 +1,10 @@
 2016-07-23	Check for -fno-integrated-as.
 
-		c++.inc ,
+		c++.inc :
+		- added functions to check for -fno-integrated-as support for
+		  host and target
+		- added conf_cxx_chk_lib()
+
 		c++.common.inc ,
 		c++.target.inc :
 		- added functions to check for -fno-integrated-as support for

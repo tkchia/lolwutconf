@@ -211,6 +211,22 @@ conf_cxx_probe_lib() {
 	done
 }
 
+conf_cxx_chk_lib() {
+	local family libs foo lib
+	family="$1"
+	libs="$2"
+	conf_cxx_probe_lib "$@"
+	var="conf_Have_cxx_lib_`conf__escape "$family"`"
+	if eval test yes = \"\$$var\"; then :; else
+		set -- $libs
+		foo="$1"
+		shift
+		for lib in ${1+"$@"}
+			do foo="$foo, $lib"; done
+		conf__barf "none of the libraries {$foo} are found host-side!"
+	fi
+}
+
 conf_cxx_probe_endianness() {
 	local prog
 	conf_cxx_chk_compiler_and_executor
