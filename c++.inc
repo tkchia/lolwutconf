@@ -89,6 +89,13 @@ conf_cxx_probe_cxx11() {
 	conf_Have_cxx11_compiler=no
 }
 
+conf_cxx_probe_opt_fno_integrated_as() {
+	conf_cxx_chk_compiler_and_executor
+	conf__cxxc_probe_opt_fno_integrated_as host "$CXX" "$CPPFLAGS" \
+	    "$CXXFLAGS" "$LDFLAGS" "$LDLIBS" "$conf_Host_exec" \
+	    conf_Have_cxx_opt_fno_integrated_as
+}
+
 conf_cxx_probe_typ() {
 	local typ var yn
 	conf_cxx_chk_compiler_and_executor

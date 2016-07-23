@@ -119,6 +119,15 @@ conf_cxxt_probe_opt_wrapper() {
 	    conf_Have_cxxt_opt_wrapper
 }
 
+conf_cxxt_probe_opt_fno_integrated_as() {
+	conf_cxxt_chk_compiler_and_executor
+	conf__cxxc_probe_opt_fno_integrated_as target \
+	    "$conf_Host_exec $CXX_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
+	    "$CXXFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    conf_Have_cxxt_opt_fno_integrated_as
+}
+
 conf_cxxt_probe_typ() {
 	local typ var
 	conf_cxxt_chk_compiler_and_executor
