@@ -1,3 +1,8 @@
+2016-07-26	"A watched clock never boils."
+
+		c++.inc :
+		- added conf_cxx_chk_var_tpls()
+
 2016-07-23	Check for -fno-integrated-as.
 
 		c++.inc :
