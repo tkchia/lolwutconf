@@ -269,6 +269,13 @@ conf_cxxt_probe_var_tpls()
 	conf__blare_res "$conf_Have_cxxt_var_tpls"
 }
 
+conf_cxxt_chk_var_tpls() {
+	conf_cxxt_probe_var_tpls
+	if test yes = "$conf_Have_cxxt_var_tpls"; then :; else
+		conf__barf 'target-side C++ compiler does not have' \
+		    'variadic templates!'; fi
+}
+
 conf_cxxt_probe_decltype() {
 	conf_cxxt_probe_cxx11
 	if conf__in_help_mode

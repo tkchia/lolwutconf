@@ -1,3 +1,8 @@
+2016-07-28	"A watched clock never boils."  (2)
+
+		c++.target.inc :
+		- added conf_cxxt_chk_var_tpls()
+
 2016-07-26	"A watched clock never boils."
 
 		c++.inc :
