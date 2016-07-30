@@ -14,7 +14,7 @@ conf_app_chk_exists() {
 			conf__blare_res yes
 		else
 			conf__blare_res no
+			conf__barf "program \`$app' not found!"
 		fi
-		conf__barf "program \`$app' not found!"
 	done
 }
