@@ -6,7 +6,7 @@ conf_app_chk_exists() {
 		c_app="`conf__escape "$app"`"
 		conf__add_var conf_Have_app_"$c_app"
 		if eval test yes = \"\$conf_Have_app_"$c_app"\"
-			then return; fi
+			then continue; fi
 		conf__blare_test \
 		    "checking if command line program \`$app' exists"
 		if conf__app_exists "$app"; then
