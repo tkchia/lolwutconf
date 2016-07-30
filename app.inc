@@ -5,7 +5,7 @@ conf_app_chk_exists() {
 	for app in ${1+"$@"}; do
 		c_app="`conf__escape "$app"`"
 		conf__add_var conf_Have_app_"$c_app"
-		if eval test yes = \$conf_Have_app_"$c_app"
+		if eval test yes = \"\$conf_Have_app_"$c_app"\"
 			then return; fi
 		conf__blare_test \
 		    "checking if command line program \`$app' exists"
