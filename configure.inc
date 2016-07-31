@@ -350,7 +350,7 @@ conf_end() {
 	local var
 	if conf__in_help_mode; then
 		conf__help
-		exit 1
+		exit 0
 	fi
 	conf__tweak_host_prefix
 	if test yes = "$conf_Is_canadian_cross"

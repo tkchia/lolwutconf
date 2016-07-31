@@ -5,6 +5,7 @@
 		- added $SHELL to list of used environment variables
 		- --help now no longer gives help pertaining to C++
 		  compilation, if C++ compilation is not used
+		- `--help' should return exit status 0, not 1
 
 		c++.inc ,
 		c++.target.inc :
