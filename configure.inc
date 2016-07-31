@@ -147,7 +147,9 @@ conf__help() {
 	conf__blare "environment variables used:"
 	conf__blare_list "$conf_Use_vars"
 	conf__blare
-	conf__blare "cross compilation notes:"
+	conf__blare "build notes:"
+    case "$conf_Use_vars" in
+    *" conf_Have_cxx_compiler "*)
     if test yes = "$conf_Is_canadian_cross"; then
 	conf__blare "  * This project allows a \`Canadian cross' setup.  It"
 	conf__blare "    uses a \`build' platform to build development tools "
@@ -187,7 +189,9 @@ conf__help() {
 	conf__blare "    system.  If --host= appears but not --host-exec,"
 	conf__blare "    \`$me' will try to look for a corresponding Qemu"
 	conf__blare "    user-mode emulator, e.g. qemu-arm."
-	conf__blare
+	conf__blare;;
+    *)	;;
+    esac
     if test yes = "$conf_Is_canadian_cross"; then
 	conf__blare "  * --target-exec=(runner) specifies a command for"
 	conf__blare "    running programs built for the target system."
@@ -296,7 +300,7 @@ conf_begin() {
 	conf_Cross_tag=
 	conf_Crosst_tag=
 	unset conf_Host_exec
-	conf_Use_vars=' conf_Srcdir conf_Prefix conf_Target_prefix '
+	conf_Use_vars=' SHELL '
 	conf_Use_mods=' configure '
 	conf_Mode=conf
 	conf_Is_canadian_cross=no
@@ -320,11 +324,9 @@ conf_begin() {
 		    *)	conf_Mode=help;;
 		esac
 	done
-	if conf__in_help_mode; then
-		conf_Use_vars=' '
-	else
-		conf_Use_vars=' conf_Srcdir conf_Prefix conf_Target_prefix '
-	fi
+	if conf__in_help_mode; then :; else
+		conf_Use_vars="$conf_Use_vars` \
+		    `conf_Srcdir conf_Prefix conf_Target_prefix "; fi
 }
 
 conf_mod() {

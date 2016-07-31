@@ -1,3 +1,14 @@
+2016-07-31	"We are on the verge: Today our program proved Fermat's
+		next-to-last theorem."
+
+		configure.inc :
+		- added $SHELL to list of used environment variables
+		- --help now no longer gives help pertaining to C++
+		  compilation, if C++ compilation is not used
+
+		app.inc :
+		- conf_app_chk_exists() now works properly in help mode
+
 2016-07-30	"A watched clock never boils."  (3)
 
 		app.inc :
