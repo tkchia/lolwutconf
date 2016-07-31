@@ -6,6 +6,10 @@
 		- --help now no longer gives help pertaining to C++
 		  compilation, if C++ compilation is not used
 
+		c++.inc ,
+		c++.target.inc :
+		- fixed operation under help mode
+
 		app.inc :
 		- conf_app_chk_exists() now works properly in help mode
 
