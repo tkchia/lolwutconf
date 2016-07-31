@@ -149,7 +149,7 @@ conf__help() {
 	conf__blare
 	conf__blare "build notes:"
     case "$conf_Use_vars" in
-    *" conf_Have_cxx_compiler "*)
+    *" CXX "*)
     if test yes = "$conf_Is_canadian_cross"; then
 	conf__blare "  * This project allows a \`Canadian cross' setup.  It"
 	conf__blare "    uses a \`build' platform to build development tools "
