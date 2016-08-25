@@ -367,7 +367,7 @@ conf_cxxt_probe_overridable_csu_init() {
 	    '  { _exit(1); }' \
 	    'int main()' \
 	    '  { return 2; }' && \
-	    $conf_Target_exec ./"$prog"
+	    $conf_Target_exec ./"$prog" >/dev/null 2>&1
 	then	conf_Have_overridable_csu_init_cxxt=yes
 	else	conf_Have_overridable_csu_init_cxxt=no
 	fi
@@ -433,7 +433,7 @@ conf_cxxt_probe_ctor_priority() {
 	    '  { if (baz == 2) baz = 1; }' \
 	    'int main()' \
 	    '  { return baz; }' && \
-	    $conf_Target_exec ./"$prog"
+	    $conf_Target_exec ./"$prog" >/dev/null 2>&1
 	then	conf_Have_ctor_priority_cxxt=yes
 	else	conf_Have_ctor_priority_cxxt=no
 	fi
@@ -459,7 +459,7 @@ conf_cxxt_probe_asm_goto() {
 	    'foo:' \
 	    '  return 1;' \
 	    '}' && \
-	    $conf_Target_exec ./"$prog"
+	    $conf_Target_exec ./"$prog" >/dev/null 2>&1
 	then	conf_Have_asm_goto_cxxt=yes
 	else	conf_Have_asm_goto_cxxt=no
 	fi
@@ -512,7 +512,7 @@ conf_cxxt_probe_impld_func() {
 	    "    return 1;" \
 	    "  return 0;" \
 	    "}" && \
-	    $conf_Target_exec ./"$prog"
+	    $conf_Target_exec ./"$prog" >/dev/null 2>&1
 	then	eval $i_var=yes
 	else	eval $i_var=no
 	fi
