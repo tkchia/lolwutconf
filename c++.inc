@@ -51,8 +51,9 @@ conf_cxx_chk_compiler_and_executor() {
 	conf__blare_res "$CXX $CPPFLAGS $CXXFLAGS"
 	conf__blare_test 'deciding host program executor'
 	if test set != "${conf_Host_exec+set}"; then
-		conf__cxxc_find_execor "$conf_Cross_tag" "$CXX" "$CPPFLAGS" \
-		    "$CXXFLAGS" "$LDFLAGS" "$LDLIBS" conf_Host_exec
+		conf__cxxc_find_execor host "$conf_Cross_tag" \
+		    "$CXX" "$CPPFLAGS" "$CXXFLAGS" "$LDFLAGS" "$LDLIBS" \
+		    conf_Host_exec
 	fi
 	conf__blare_res "${conf_Host_exec:-(blank)}"
 	conf__blare_test 'checking if C++ compiler and executor for host work'

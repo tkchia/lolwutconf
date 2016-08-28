@@ -206,10 +206,13 @@ conf__help() {
     fi
 }
 
+# Use some GNU compiler or other to find a good prefix (as in `/usr',
+# `/usr/local', etc.) to use for host-/target-specific libraries.
+#
 conf__find_good_runtime_prefix() {
-	local cxx cxxflags good_prefix prefix
-	cxx="$1"
-	cxxflags="$2"
+	local gnu gnuflags good_prefix prefix
+	gnu="$1"
+	gnuflags="$2"
 	good_prefix=
 	for arg in -print-file-name=libc.so \
 		   -print-file-name=libc.a \
@@ -220,7 +223,7 @@ conf__find_good_runtime_prefix() {
 		# We cannot really rely on `realpath' or `readlink' being
 		# available, so do this nasty thang...
 		#
-		prefix="`$cxx $cxxflags $arg`"
+		prefix="`$gnu $gnuflags $arg`"
 		prefix="`echo "$prefix" | xargs dirname`"
 		prefix="`cd "$prefix" && pwd`"
 		case "$prefix" in

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+conf_mod execor.common
+
 conf__cxxc_chk_compiler_with() {
 	local cxx cppflags cxxflags ldflags ldlibs execor prog src res line
 	cxx="$1"
@@ -93,52 +95,32 @@ conf__cxxc_find_cross_compiler() {
 }
 
 conf__cxxc_find_execor() {
-	local cross_tag cxx cppflags cxxflags ldflags ldlibs execor_var \
-	    execor save_ifs ld_prefix
-	if test $# != 7
-		then conf__barf 'lolwut?!? $# != 7'; fi
-	cross_tag="$1"
-	cxx="$2"
-	cppflags="$3"
-	cxxflags="$4"
-	ldflags="$5"
-	ldlibs="$6"
-	execor_var="$7"
-	execor=
-	if test -z "$cross_tag"; then
-		:	# nothing to do
-	elif conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
-	    "$ldflags" "$ldlibs" ''; then
-		:	# nothing to do too -- no need for a separate
-			# program to run host-side commands
+	local plat cross_tag cxx cppflags cxxflags ldflags ldlibs execor_var \
+	    save_ifs ld_prefix
+	if test $# != 8
+		then conf__barf 'lolwut?!? $# != 8'; fi
+	plat="$1"
+	cross_tag="$2"
+	cxx="$3"
+	cppflags="$4"
+	cxxflags="$5"
+	ldflags="$6"
+	ldlibs="$7"
+	execor_var="$8"
+	ld_prefix="`conf__find_good_runtime_prefix "$cxx" "$cxxflags"`"
+	prog="`conf__mktemp lolwutconf`"
+	src="$prog.cc"
+	echo 'int main() { return 0; }' >"$src"
+	res=0
+	if $cxx $cppflags $cxxflags $ldflags -o"$prog" "$src" $ldlibs \
+	    >/dev/null 2>&1; then
+		rm -f "$src"
+		conf__find_execor "$plat" "$cross_tag" "$prog" "$ld_prefix" \
+		    "$execor_var"
 	else
-		case "$cross_tag" in
-		    i[3456]86-*)
-			execor=qemu-i386;;
-		    armv[45678]* | arm-*)
-			execor=qemu-arm;;
-		    aarch64-* | armeb-* | cris-* | m68k-* | \
-		    microblaze-* | microblazeel-* | mips-* | \
-		    mips64-* | mips64el-* | mipsel-* | mipsn32-* | \
-		    mipsn32el-* | or32-* | ppc-* | ppc64-* | \
-		    ppc64abi32-* | s390x-* | sh4-* | sh4eb-* | \
-		    sparc-* | sparc32plus-* | sparc64-* | x86_64-*)
-			# the above pattern is not really tested...
-			save_ifs="$IFS"
-			set '--' $cross_tag
-			execor=qemu-"$1"
-			IFS="$save_ifs";;
-		    *)	# OK, we do not really know what to do here...
-			;;
-		esac
-		if test -n "$execor"; then
-			ld_prefix="`conf__find_good_runtime_prefix \
-			    "$cxx" "$cxxflags"`"
-			if test -n "$ld_prefix"
-				then execor="$execor -L $ld_prefix"; fi
-		fi
+		rm -f "$src"
+		conf__barf 'C++ compiler does not work!'
 	fi
-	eval "$execor_var"='"$execor"'
 }
 
 conf__cxxc_probe_thumb() {

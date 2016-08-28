@@ -64,7 +64,7 @@ conf_cxxt_chk_compiler_and_executor() {
 	    `$CPPFLAGS_FOR_TARGET $CXXFLAGS_FOR_TARGET"
 	conf__blare_test 'deciding target program executor'
 	if test set != "${conf_Target_exec+set}"; then
-		conf__cxxc_find_execor "$conf_Crosst_tag" \
+		conf__cxxc_find_execor target "$conf_Crosst_tag" \
 		    "$conf_Host_exec $CXX_FOR_TARGET" \
 		    "$CPPFLAGS_FOR_TARGET" "$CXXFLAGS_FOR_TARGET" \
 		    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" \

@@ -1,3 +1,20 @@
+2016-08-28	"Xerox never comes up with anything original."  (3)
+
+		execor.common.inc :
+		- new
+
+		c++.common.inc :
+		- conf__cxxc_find_execor() now requires one extra argument
+		- factored out executor-finding logic into execor.common.inc
+
+		c++.inc ,
+		c++.target.inc :
+		- changed to fit new conf__cxxc_find_execor()
+
+		configure.inc :
+		- renamed arguments to conf__find_good_runtime_prefix() --
+		  to generalize them
+
 2016-08-25	"Xerox never comes up with anything original."  (2)
 
 		c++.target.inc :
