@@ -1,3 +1,14 @@
+2016-09-03	Minor tweaks.
+
+		c++.common.inc :
+		- tweaked informational messages
+
+		bfd.inc :
+		- split up conf_bfd_chk_exists() into two parts
+
+		execor.common.inc :
+		- removed superfluous conf__find_good_runtime_prefix() call
+
 2016-08-28	"Xerox never comes up with anything original."  (3)
 
 		execor.common.inc :

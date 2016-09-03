@@ -134,7 +134,8 @@ conf__cxxc_probe_thumb() {
 	execor="$7"
 	shift 7
 	eval "cxxflags=\"\$$cxxflags_var\""
-	conf__blare_test "checking if Thumb mode is relevant for $plat"
+	conf__blare_test "checking if Thumb mode is relevant for" \
+	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
 	    "$ldflags" "$ldlibs" "$execor" \
 	    '#ifdef __arm__' '#error' '#endif'
@@ -142,7 +143,8 @@ conf__cxxc_probe_thumb() {
 		return 0
 	fi
 	conf__blare_res yes
-	conf__blare_test "checking if Thumb mode is already enabled for $plat"
+	conf__blare_test "checking if Thumb mode is already enabled for" \
+	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
 	    "$ldflags" "$ldlibs" "$execor" \
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'
@@ -150,7 +152,8 @@ conf__cxxc_probe_thumb() {
 		return 0
 	fi
 	conf__blare_res no
-	conf__blare_test "checking command to enable Thumb mode for $plat"
+	conf__blare_test "checking command to enable Thumb mode for" \
+	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" \
 	    "$cxxflags -mthumb" "$ldflags" "$ldlibs" "$execor" \
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'

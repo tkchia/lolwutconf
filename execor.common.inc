@@ -47,7 +47,6 @@ conf__find_execor() {
 		return 0
 	fi
 	if test -n "$execor"; then
-		ld_prefix="`conf__find_good_runtime_prefix "$cxx" "$cxxflags"`"
 		if test -n "$ld_prefix"
 			then execor="$execor -L $ld_prefix"; fi
 		if $execor ./"$prog" >/dev/null 2>&1; then
