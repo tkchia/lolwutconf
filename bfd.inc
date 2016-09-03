@@ -22,6 +22,8 @@ conf_bfd_probe_exists() {
 
 conf_bfd_chk_exists() {
 	conf_bfd_probe_exists
+	if conf__in_help_mode
+		then return 0; fi
 	if test yes = "$conf_Have_bfd"
 		then return 0; fi
 	conf__barf 'libbfd not installed!'
