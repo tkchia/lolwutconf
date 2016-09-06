@@ -264,10 +264,11 @@ conf__cxxc_probe_func() {
 			proto="$proto,T$i x$i"
 			args="$args,x$i"
 		done
+		templ="template<$templ>"
 	fi
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
 	    "$ldflags" "$ldlibs" "$execor" ${1+"$@"} \
-	    "template<$templ> void conf_foo($proto) { $func($args); }"
+	    "$templ void conf_foo($proto) { $func($args); }"
 	then    eval $var=yes
 	else    eval $var=no
 	fi

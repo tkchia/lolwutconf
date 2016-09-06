@@ -1,3 +1,11 @@
+2016-09-06	More minor tweaks.
+
+		c++.common.inc :
+		- no longer says `template<>' when testing for C++ function
+
+		c++.inc :
+		- tweaked informational message
+
 2016-09-03	Minor tweaks.
 
 		c++.common.inc :
