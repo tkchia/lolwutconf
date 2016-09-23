@@ -297,7 +297,7 @@ conf__escape() {
 conf_begin() {
 	local opt var
 	conf__check_general_sanity
-	conf_Srcdir=.
+	conf_Srcdir="`dirname "$0"`"
 	conf_Prefix=/usr/local
 	conf_Target_prefix=
 	conf_Cross_tag=

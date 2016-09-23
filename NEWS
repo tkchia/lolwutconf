@@ -1,3 +1,13 @@
+2016-09-23	_Really_ properly support separate source and build
+		directories.
+
+		configure.inc :
+		- now determines $conf_Srcdir based on location of $0
+
+		lolwutconf.mk :
+		- now adds two `-I...' flags to $(CPPFLAGS) and $(CPPFLAGS_
+		  FOR_TARGET) if source and build directories differ
+
 2016-09-06	More minor tweaks.
 
 		c++.common.inc :
