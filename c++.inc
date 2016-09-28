@@ -205,7 +205,7 @@ conf_cxx_probe_lib() {
 	conf__add_var "$var"
 	eval $var=no
 	for lib in $libs; do
-		conf__blare_test "testing for host-side C++ library $lib"
+		conf__blare_test "testing for host-side C++ library -l$lib"
 		if conf__cxx_chk_compiler_with "$CXXFLAGS" "-l$lib $LDLIBS" \
 		    ${1+"$@"}; then
 			LDLIBS="-l$lib $LDLIBS"

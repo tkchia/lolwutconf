@@ -1,3 +1,9 @@
+2016-09-28	Yet more minor tweaks.
+
+		c++.inc ,
+		c++.target.inc :
+		- tweaked informational messages
+
 2016-09-23	_Really_ properly support separate source and build
 		directories.
 

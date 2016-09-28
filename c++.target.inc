@@ -166,7 +166,7 @@ conf_cxxt_probe_lib() {
 	conf__add_var "$var"
 	eval $var=no
 	for lib in $libs; do
-		conf__blare_test "testing for target-side library $lib"
+		conf__blare_test "testing for target-side library -l$lib"
 		if conf__cxxt_chk_compiler_with "$CXXFLAGS_FOR_TARGET" \
 		    "-l$lib $LDLIBS_FOR_TARGET" ${1+"$@"}; then
 			LDLIBS_FOR_TARGET="-l$lib $LDLIBS_FOR_TARGET"
