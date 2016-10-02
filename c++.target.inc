@@ -1,6 +1,6 @@
 #!/bin/sh
 
-conf_mod c++.common
+conf_mod c++.common c++
 conf_Is_canadian_cross=yes
 
 conf__cxxt_chk_compiler_with() {
@@ -43,9 +43,9 @@ conf_cxxt_chk_compiler_and_executor() {
 	conf__add_var CXX_FOR_TARGET CPPFLAGS_FOR_TARGET CXXFLAGS_FOR_TARGET \
 	    LDFLAGS_FOR_TARGET LDLIBS_FOR_TARGET \
 	    conf_Have_cxxt_compiler conf_Target_exec
+	conf_cxx_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
-	conf_cxx_chk_compiler_and_executor
 	try_thumb=no
 	conf__blare_test 'deciding C++ compiler for target'
 	if test -n "$conf_Crosst_tag" -a -z "$CXX_FOR_TARGET"; then
@@ -166,7 +166,7 @@ conf_cxxt_probe_lib() {
 	conf__add_var "$var"
 	eval $var=no
 	for lib in $libs; do
-		conf__blare_test "testing for target-side library -l$lib"
+		conf__blare_test "testing for target-side C++ library -l$lib"
 		if conf__cxxt_chk_compiler_with "$CXXFLAGS_FOR_TARGET" \
 		    "-l$lib $LDLIBS_FOR_TARGET" ${1+"$@"}; then
 			LDLIBS_FOR_TARGET="-l$lib $LDLIBS_FOR_TARGET"

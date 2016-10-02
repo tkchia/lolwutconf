@@ -149,7 +149,7 @@ conf__help() {
 	conf__blare
 	conf__blare "build notes:"
     case "$conf_Use_vars" in
-    *" CXX "*)
+    *" CXX "* | *" CC "*)
     if test yes = "$conf_Is_canadian_cross"; then
 	conf__blare "  * This project allows a \`Canadian cross' setup.  It"
 	conf__blare "    uses a \`build' platform to build development tools "
@@ -158,40 +158,64 @@ conf__help() {
 	conf__blare "    build on default, and target = host on default."
 	conf__blare
     fi
-	conf__blare "  * If you specify --host=(platform), \`$me' will look"
-	conf__blare "    for cross compilers named (platform)-g++, etc. if"
-    if test yes = "$conf_Is_canadian_cross"; then
-	conf__blare "    CXX is undefined.  Ditto for --target=(platform)."
-	conf__blare "    Also:"
-    else
-	conf__blare "    CXX is undefined.  Also:"
-    fi
+    set --
+    case "$conf_Use_vars" in
+    *" CC "*) set -- ${1+"$@"} '(platform)-gcc if CC is undefined';; esac
+    case "$conf_Use_vars" in
+    *" CXX "*) set -- ${1+"$@"} '(platform)-g++ if CXX is undefined';; esac
+    if test $# -ne 0; then
+	conf__blare "  * If you specify --host=(platform), \`$me' will"
+	conf__blare "    look for"
+    while test $# -gt 1; do
+	conf__blare "    - $1"
+	shift
+    done
+	conf__blare "    - $1."
 	conf__blare
+    fi
+    set --
+    case "$conf_Use_vars" in
+    *" CC_FOR_TARGET "*)
+    set -- ${1+"$@"} '(platform)-gcc if CC_FOR_TARGET is undefined';; esac
+    case "$conf_Use_vars" in
+    *" CXX_FOR_TARGET "*)
+    set -- ${1+"$@"} '(platform)-g++ if CXX_FOR_TARGET is undefined';; esac
+    if test $# -ne 0; then
+	conf__blare "  * If you specify --target=(platform), \`$me' will"
+	conf__blare "    look for"
+    while test $# -gt 1; do
+	conf__blare "    - $1"
+	shift
+    done
+	conf__blare "    - $1."
+	conf__blare
+    fi
+	conf__blare "  * Also:"
 	conf__blare "    - If (platform) is i386-*, i486-*, i586-*, or"
 	conf__blare "      i686-*, e.g. i386-linux-gnu, \`$me' will also try"
 	conf__blare "      looking for a corresponding 64-bit compiler named"
-	conf__blare "      x86_64-*-g++, and pass it -m32, -march= flags."
+	conf__blare "      e.g. x86_64-*-g++, and pass it -m32, -march= flags."
 	conf__blare
 	conf__blare "    - If (platform) is armv4*, armv5*, armv6*, armv7*,"
-	conf__blare "      or armv8*, \`$me' will also look for arm-*-g++,"
-	conf__blare "      and try to use Thumb mode."
+	conf__blare "      or armv8*, \`$me' will also look for e.g."
+	conf__blare "      arm-*-g++, and try to use Thumb mode."
 	conf__blare
-	conf__blare "  * Alternatively, do not specify --host=, but provide"
-	conf__blare "    compiler settings in CXX, CXXFLAGS, etc."
-	conf__blare
+	conf__blare "  * As implied above, instead of specifying --host=,"
+	conf__blare "    you can directly provide compiler settings in"
     if test yes = "$conf_Is_canadian_cross"; then
-	conf__blare "  * Instead of --target=, too, you can define"
-	conf__blare "    CXX_FOR_TARGET, CXXFLAGS_FOR_TARGET, etc."
-	conf__blare
+	conf__blare "    environment variables.  Ditto for --target=."
+    else
+	conf__blare "    environment variables."
     fi
-	conf__blare "  * In addition, --host-exec=(runner) specifies a"
-	conf__blare "    command for running programs built for the host"
-	conf__blare "    system.  If --host= appears but not --host-exec,"
-	conf__blare "    \`$me' will try to look for a corresponding Qemu"
-	conf__blare "    user-mode emulator, e.g. qemu-arm."
 	conf__blare;;
     *)	;;
     esac
+	conf__blare "  * --host-exec=(runner) specifies a command for running"
+	conf__blare "    programs built for the host sytem.  If --host="
+	conf__blare "    appears but not --host-exec, \`$me' will try to"
+	conf__blare "    look for a corresponding Qemu user-mode emulator,"
+	conf__blare "    e.g. qemu-arm."
+	conf__blare
     if test yes = "$conf_Is_canadian_cross"; then
 	conf__blare "  * --target-exec=(runner) specifies a command for"
 	conf__blare "    running programs built for the target system."

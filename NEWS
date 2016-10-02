@@ -1,3 +1,19 @@
+2016-10-02	Some support for C, hopefully.
+
+		c.common.inc ,
+		c.inc ,
+		c.target.inc :
+		- new
+
+		c++.target.inc :
+		- tweaked conf_cxxt_chk_compiler_and_executor() so the help
+		  messages show it as possibly depending on host settings
+		  CXX, CXXFLAGS, etc.
+		- tweaked message for conf_cxxt_probe_lib()
+
+		configure.inc :
+		- rather major changes to conf__help()
+
 2016-09-28	Yet more minor tweaks.
 
 		c++.inc ,
