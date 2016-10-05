@@ -383,8 +383,8 @@ conf_cxxt_probe_dyn_ld() {
 	if test -n "$conf_Dyn_ld_cxxt"
 		then return 0; fi
 	conf__add_var conf_Dyn_ld_cxxt
-	conf__blare_test \
-	    "checking if target produces dynamically linked executables"
+	conf__blare_test "checking if target C++ compiler" \
+	    "produces dynamically linked executables"
 	#
 	# If linking works even if we specify a bogus dynamic interpreter,
 	# then conclude that we are creating statically linked programs.

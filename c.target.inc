@@ -231,6 +231,38 @@ conf_ct_probe_endianness() {
 	conf__blare_res "$conf_Endianness_ct"
 }
 
+conf_ct_probe_dyn_ld() {
+	local prog
+	conf_ct_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	if test -n "$conf_Dyn_ld_ct"
+		then return 0; fi
+	conf__add_var conf_Dyn_ld_ct
+	conf__blare_test "checking if target C compiler" \
+	    "produces dynamically linked executables"
+	# See c++.target.inc.
+	if conf__ct_chk_compiler_with \
+	    "$CFLAGS_FOR_TARGET -Wl,--dynamic-linker=/" "$LDLIBS_FOR_TARGET"
+	then
+		conf__blare_res no
+		conf_Dyn_ld_ct=no
+	elif conf__ct_chk_compiler_with "$CFLAGS_FOR_TARGET" \
+	    "$LDLIBS_FOR_TARGET -ldl" \
+	    '#include <dlfcn.h>' \
+	    'void *foo()' \
+	    '  { return dlopen(0, RTLD_LAZY); }'
+	then
+		conf__blare_res yes
+		conf_Dyn_ld_ct=yes
+	else
+		conf__blare_res unknown
+		conf__barf 'cannot tell if C compiler produces' \
+		    'dynamic or static programs!'
+	fi
+}
+
+
 conf_ct_probe_asm_goto() {
 	local prog
 	conf_ct_chk_compiler_and_executor

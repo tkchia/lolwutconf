@@ -1,3 +1,11 @@
+2016-10-05	Some support for C, hopefully.  (2)
+
+		c.target.inc :
+		- added conf_ct_probe_dyn_ld()
+
+		c++.target.inc :
+		- tweaked informational messages
+
 2016-10-02	Some support for C, hopefully.
 
 		c.common.inc ,
