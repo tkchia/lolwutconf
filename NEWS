@@ -5,6 +5,7 @@
 		- renamed from app.inc
 		- conf_app_chk_exists() -> conf_appb_chk_exists(), plus it
 		  caches the test result in a different variable
+		- added conf_appb_probe_exists()
 
 2016-10-05	Some support for C, hopefully.  (2)
 
