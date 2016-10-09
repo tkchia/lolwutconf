@@ -61,8 +61,9 @@ conf_bfd_chk_strip() {
 	prog="`conf__mktemp lolwutconf`"
 	sprog="`conf__mktemp lolwutconf`"
 	conf__ct_compile_prog "$prog" "int main() { return 0; }"
-	if $conf_Host_exec $STRIP_FOR_TARGET -o"$sprog" "$prog" \
+	if $conf_Host_exec $STRIP_FOR_TARGET -o "$sprog" "$prog" \
 	    >/dev/null 2>&1 && \
+	   test -s "$prog" && \
 	   $conf_Target_exec ./"$sprog"
 	then
 		rm -f "$prog" "$sprog"
