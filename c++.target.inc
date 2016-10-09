@@ -37,7 +37,6 @@ conf__cxxt_compile_prog() {
 }
 
 conf_cxxt_chk_compiler_and_executor() {
-	local
 	if test -n "$conf_Have_cxxt_compiler"
 		then return 0; fi
 	conf__add_var CXX_FOR_TARGET CPPFLAGS_FOR_TARGET CXXFLAGS_FOR_TARGET \

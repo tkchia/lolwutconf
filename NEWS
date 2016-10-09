@@ -1,3 +1,15 @@
+2016-10-09	"The number of arguments is unimportant unless some of them
+		 are correct."  (2)
+
+		bfd.inc :
+		- added conf_bfd_chk_strip()
+		- now uses C compiler rather than C++ compiler to test for
+		  libbfd existence
+
+		c.target.inc ,
+		c++.target.inc :
+		- removed unneeded `local' statements
+
 2016-10-08	"The number of arguments is unimportant unless some of them
 		 are correct."
 

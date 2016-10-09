@@ -37,7 +37,6 @@ conf__ct_compile_prog() {
 }
 
 conf_ct_chk_compiler_and_executor() {
-	local
 	if test -n "$conf_Have_ct_compiler"
 		then return 0; fi
 	conf__add_var CC_FOR_TARGET CPPFLAGS_FOR_TARGET CFLAGS_FOR_TARGET \
