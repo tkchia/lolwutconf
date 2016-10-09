@@ -2,7 +2,8 @@
 		 are correct."  (2)
 
 		bfd.inc :
-		- added conf_bfd_chk_strip()
+		- added conf_bfd_chk_strip() and conf_bfd_strip_probe_opt_
+		  strip_unneeded
 		- now uses C compiler rather than C++ compiler to test for
 		  libbfd existence
 

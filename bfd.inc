@@ -75,3 +75,24 @@ conf_bfd_chk_strip() {
 		conf__barf 'strip program does notwork!'
 	fi
 }
+
+conf_bfd_strip_probe_opt_strip_unneeded() {
+	local prog sprog
+	conf_bfd_chk_strip
+	conf__add_var conf_Have_bfd_strip_opt_strip_unneeded
+	if test -n "$conf_Have_bfd_strip_opt_strip_unneeded"
+		then return 0; fi
+	conf__blare_test 'checking if strip program supports --strip-unneeded'
+	prog="`conf__mktemp lolwutconf`"
+	sprog="`conf__mktemp lolwutconf`"
+	conf__ct_compile_prog "$prog" "int main() { return 0; }"
+	if $conf_Host_exec $STRIP_FOR_TARGET --strip-unneeded -o "$sprog" \
+	    "$prog" >/dev/null 2>&1 && \
+	   test -s "$sprog" && \
+	   $conf_Target_exec ./"$sprog"
+	then	conf_Have_bfd_strip_opt_strip_unneeded=yes
+	else	conf_Have_bfd_strip_opt_strip_unneeded=no
+	fi
+	rm -f "$prog" "$sprog"
+	conf__blare_res "$conf_Have_bfd_strip_opt_strip_unneeded"
+}
