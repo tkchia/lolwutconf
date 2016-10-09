@@ -63,7 +63,7 @@ conf_bfd_chk_strip() {
 	conf__ct_compile_prog "$prog" "int main() { return 0; }"
 	if $conf_Host_exec $STRIP_FOR_TARGET -o "$sprog" "$prog" \
 	    >/dev/null 2>&1 && \
-	   test -s "$prog" && \
+	   test -s "$sprog" && \
 	   $conf_Target_exec ./"$sprog"
 	then
 		rm -f "$prog" "$sprog"
