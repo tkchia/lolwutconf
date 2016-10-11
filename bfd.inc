@@ -2,6 +2,25 @@
 
 conf_mod c c.target
 
+conf__bfd_chk_strip_with() {
+	local prog sprog res
+	prog="`conf__mktemp lolwutconf`"
+	sprog="`conf__mktemp lolwutconf`"
+	conf__ct_compile_prog "$prog" "int main() { return 0; }"
+	if $conf_Host_exec $STRIP_FOR_TARGET ${1+"$@"} -o "$sprog" "$prog" \
+	    >/dev/null 2>&1 && \
+	   test -s "$sprog" && \
+	   $conf_Target_exec ./"$sprog"
+	then
+		rm -f "$prog" "$sprog"
+		return 0
+	else
+		res=$?
+		rm -f "$prog" "$sprog"
+		return $res
+	fi
+}
+
 conf_bfd_probe_exists() {
 	if conf__in_help_mode
 		then return 0; fi
@@ -58,41 +77,37 @@ conf_bfd_chk_strip() {
 	fi
 	conf__blare_res "[$conf_Host_exec] $STRIP_FOR_TARGET"
 	conf__blare_test 'checking if strip program works'
-	prog="`conf__mktemp lolwutconf`"
-	sprog="`conf__mktemp lolwutconf`"
-	conf__ct_compile_prog "$prog" "int main() { return 0; }"
-	if $conf_Host_exec $STRIP_FOR_TARGET -o "$sprog" "$prog" \
-	    >/dev/null 2>&1 && \
-	   test -s "$sprog" && \
-	   $conf_Target_exec ./"$sprog"
-	then
-		rm -f "$prog" "$sprog"
+	if conf__bfd_chk_strip_with; then
 		conf__blare_res yes
 		conf_Have_bfd_strip=yes
 	else
-		rm -f "$prog" "$sprog"
 		conf__blare_res no
 		conf__barf 'strip program does notwork!'
 	fi
 }
 
 conf_bfd_strip_probe_opt_strip_unneeded() {
-	local prog sprog
 	conf_bfd_chk_strip
 	conf__add_var conf_Have_bfd_strip_opt_strip_unneeded
 	if test -n "$conf_Have_bfd_strip_opt_strip_unneeded"
 		then return 0; fi
 	conf__blare_test 'checking if strip program supports --strip-unneeded'
-	prog="`conf__mktemp lolwutconf`"
-	sprog="`conf__mktemp lolwutconf`"
-	conf__ct_compile_prog "$prog" "int main() { return 0; }"
-	if $conf_Host_exec $STRIP_FOR_TARGET --strip-unneeded -o "$sprog" \
-	    "$prog" >/dev/null 2>&1 && \
-	   test -s "$sprog" && \
-	   $conf_Target_exec ./"$sprog"
+	if conf__bfd_chk_strip_with --strip-unneeded
 	then	conf_Have_bfd_strip_opt_strip_unneeded=yes
 	else	conf_Have_bfd_strip_opt_strip_unneeded=no
 	fi
-	rm -f "$prog" "$sprog"
 	conf__blare_res "$conf_Have_bfd_strip_opt_strip_unneeded"
+}
+
+conf_bfd_strip_probe_opt_strip_all() {
+	conf_bfd_chk_strip
+	conf__add_var conf_Have_bfd_strip_opt_strip_all
+	if test -n "$conf_Have_bfd_strip_opt_strip_all"
+		then return 0; fi
+	conf__blare_test 'checking if strip program supports --strip-all'
+	if conf__bfd_chk_strip_with --strip-all
+	then	conf_Have_bfd_strip_opt_strip_all=yes
+	else	conf_Have_bfd_strip_opt_strip_all=no
+	fi
+	conf__blare_res "$conf_Have_bfd_strip_opt_strip_all"
 }
