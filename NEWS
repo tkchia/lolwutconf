@@ -4,6 +4,7 @@
 		bfd.inc :
 		- refactored
 		- added conf_bfd_strip_probe_opt_strip_all()
+		- tweaked for correct operation in help mode
 
 2016-10-09	"The number of arguments is unimportant unless some of them
 		 are correct."  (2)

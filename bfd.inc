@@ -89,6 +89,8 @@ conf_bfd_chk_strip() {
 conf_bfd_strip_probe_opt_strip_unneeded() {
 	conf_bfd_chk_strip
 	conf__add_var conf_Have_bfd_strip_opt_strip_unneeded
+	if conf__in_help_mode
+		then return 0; fi
 	if test -n "$conf_Have_bfd_strip_opt_strip_unneeded"
 		then return 0; fi
 	conf__blare_test 'checking if strip program supports --strip-unneeded'
@@ -102,6 +104,8 @@ conf_bfd_strip_probe_opt_strip_unneeded() {
 conf_bfd_strip_probe_opt_strip_all() {
 	conf_bfd_chk_strip
 	conf__add_var conf_Have_bfd_strip_opt_strip_all
+	if conf__in_help_mode
+		then return 0; fi
 	if test -n "$conf_Have_bfd_strip_opt_strip_all"
 		then return 0; fi
 	conf__blare_test 'checking if strip program supports --strip-all'
