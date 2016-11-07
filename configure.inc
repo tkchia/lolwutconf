@@ -32,7 +32,7 @@ conf__app_exists() {
 
 conf__check_general_sanity() {
 	local app
-	for app in : awk basename chmod cp dirname echo grep ln mv rm \
+	for app in : awk basename chmod cp dirname echo grep ln mv pwd rm \
 	    strings seq test type; do
 		if conf__app_exists "$app"; then :; else
 			conf__barf "command line program \`$app' not found!"
@@ -315,13 +315,20 @@ conf__escape() {
 	local word
 	for word in ${1+"$@"}; do
 		echo "$word"
-	done | awk -f "$conf_Srcdir/lolwutconf/escape.awk"
+	done | awk -f "$conf_Lolwutconf_dir/escape.awk"
 }
 
 conf_begin() {
 	local opt var
 	conf__check_general_sanity
 	conf_Srcdir="`dirname "$0"`"
+	if test -e "$conf_Srcdir/lolwutconf/configure.inc"; then
+		conf_Lolwutconf_dir="$conf_Srcdir/lolwutconf"
+	elif test -e "lolwutconf/configure.inc"; then
+		conf_Lolwutconf_dir="`pwd`/lolwutconf"
+	else
+		conf__barf 'cannot find myself (configure.inc)!'
+	fi
 	conf_Prefix=/usr/local
 	conf_Target_prefix=
 	conf_Cross_tag=
@@ -365,10 +372,10 @@ conf_mod() {
 		    *)
 			if conf__in_help_mode; then :; else
 				conf__blare \
-				    "reading $conf_Srcdir/lolwutconf/$mod.inc"
+				    "reading $conf_Lolwutconf_dir/$mod.inc"
 			fi
 			conf_Use_mods="$conf_Use_mods$mod "
-			. "$conf_Srcdir/lolwutconf/$mod.inc";;
+			. "$conf_Lolwutconf_dir/$mod.inc";;
 		esac
 	done
 }

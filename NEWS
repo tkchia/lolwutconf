@@ -1,3 +1,10 @@
+2016-11-07	"The number of arguments is unimportant unless some of them
+		 are correct."  (4)
+
+		configure.inc :
+		- may now be invoked from the current directory even if the
+		  source directory is separate
+
 2016-10-11	"The number of arguments is unimportant unless some of them
 		 are correct."  (3)
 
