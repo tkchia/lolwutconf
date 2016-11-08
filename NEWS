@@ -1,3 +1,9 @@
+2016-11-08	"The number of arguments is unimportant unless some of them
+		 are correct."  (5)
+
+		configure.inc :
+		- now includes $conf_Lolwutconf_dir in list of used variables
+
 2016-11-07	"The number of arguments is unimportant unless some of them
 		 are correct."  (4)
 

@@ -360,7 +360,8 @@ conf_begin() {
 	done
 	if conf__in_help_mode; then :; else
 		conf_Use_vars="$conf_Use_vars` \
-		    `conf_Srcdir conf_Prefix conf_Target_prefix "; fi
+		    `conf_Srcdir conf_Lolwutconf_dir conf_Prefix ` \
+		    `conf_Target_prefix "; fi
 }
 
 conf_mod() {
