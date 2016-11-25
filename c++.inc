@@ -94,9 +94,18 @@ conf_cxx_probe_opt_fno_integrated_as() {
 	conf_cxx_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
-	conf__cxxc_probe_opt_fno_integrated_as host "$CXX" "$CPPFLAGS" \
+	conf__cxxc_probe_opt -fno-integrated-as host "$CXX" "$CPPFLAGS" \
 	    "$CXXFLAGS" "$LDFLAGS" "$LDLIBS" "$conf_Host_exec" \
 	    conf_Have_cxx_opt_fno_integrated_as
+}
+
+conf_cxx_probe_opt_fwritable_strings() {
+	conf_cxx_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	conf__cxxc_probe_opt -fwritable-strings host "$CXX" "$CPPFLAGS" \
+	    "$CXXFLAGS" "$LDFLAGS" "$LDLIBS" "$conf_Host_exec" \
+	    conf_Have_cxx_opt_fwritable_strings
 }
 
 conf_cxx_probe_typ() {

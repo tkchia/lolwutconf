@@ -206,25 +206,25 @@ conf__cxxc_probe_opt_wrapper() {
 	eval conf__blare_res \"\$$var\"
 }
 
-conf__cxxc_probe_opt_fno_integrated_as() {
-	local plat cxx cppflags cxxflags ldflags ldlibs execor var
-	plat="$1"
-	cxx="$2"
-	cppflags="$3"
-	cxxflags="$4"
-	ldflags="$5"
-	ldlibs="$6"
-	execor="$7"
-	var="$8"
-	shift 8
+conf__cxxc_probe_opt() {
+	local opt plat cxx cppflags cxxflags ldflags ldlibs execor var
+	opt="$1"
+	plat="$2"
+	cxx="$3"
+	cppflags="$4"
+	cxxflags="$5"
+	ldflags="$6"
+	ldlibs="$7"
+	execor="$8"
+	var="$9"
+	shift 9
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
 	conf__blare_test \
-	    "checking if $plat-side C++ compiler supports -fno-integrated-as"
-	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" \
-	    "$cxxflags -fno-integrated-as" "$ldflags" "$ldlibs" "$execor" \
-	    ${1+"$@"}; then
+	    "checking if $plat-side C++ compiler supports $opt"
+	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags $opt" \
+	    "$ldflags" "$ldlibs" "$execor" ${1+"$@"}; then
 		eval $var=yes
 	else
 		eval $var=no

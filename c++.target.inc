@@ -124,11 +124,22 @@ conf_cxxt_probe_opt_fno_integrated_as() {
 	conf_cxxt_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
-	conf__cxxc_probe_opt_fno_integrated_as target \
+	conf__cxxc_probe_opt -fno-integrated-as target \
 	    "$conf_Host_exec $CXX_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
 	    "$CXXFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
 	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
 	    conf_Have_cxxt_opt_fno_integrated_as
+}
+
+conf_cxxt_probe_opt_fwritable_strings() {
+	conf_cxxt_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	conf__cxxc_probe_opt -fwritable-strings target \
+	    "$conf_Host_exec $CXX_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
+	    "$CXXFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    conf_Have_cxxt_opt_fwritable_strings
 }
 
 conf_cxxt_probe_typ() {

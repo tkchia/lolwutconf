@@ -1,3 +1,15 @@
+2016-11-25	"The number of arguments is unimportant unless some of them
+		 are correct."  (6)
+
+		c++.common.inc :
+		- generalized conf__cxxc_probe_opt_fno_integrated_as() into
+		  conf__cxxc_probe_opt()
+
+		c++.inc ,
+		c++.target.inc :
+		- added routines to test for `-fwritable-strings' support
+		- now use conf__cxxc_probe_opt()
+
 2016-11-08	"The number of arguments is unimportant unless some of them
 		 are correct."  (5)
 
