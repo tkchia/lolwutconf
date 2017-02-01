@@ -1,3 +1,8 @@
+2017-02-01	"Two heads are more numerous than one."
+
+		escape.awk :
+		- fixed handling of multiple underscores
+
 2016-11-25	"The number of arguments is unimportant unless some of them
 		 are correct."  (6)
 
