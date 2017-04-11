@@ -6,7 +6,7 @@ conf__bfd_chk_strip_with() {
 	local prog sprog res
 	prog="`conf__mktemp lolwutconf`"
 	sprog="`conf__mktemp lolwutconf`"
-	conf__ct_compile_prog "$prog" "int main() { return 0; }"
+	conf__ct_compile_prog "$prog" "int main(void) { return 0; }"
 	if $conf_Host_exec $STRIP_FOR_TARGET ${1+"$@"} -o "$sprog" "$prog" \
 	    >/dev/null 2>&1 && \
 	   test -s "$sprog" && \

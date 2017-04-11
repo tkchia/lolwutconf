@@ -231,8 +231,8 @@ conf_cxxt_probe_endianness() {
 	conf__blare_test "testing target-side byte order"
 	prog="`conf__mktemp lolwutconf`"
 	if conf__cxxt_compile_prog "$prog" \
+	    "#include <cstdio>" \
 	    "#include <cstring>" \
-	    "#include <iostream>" \
 	    "using namespace std;" \
 	    "typedef unsigned char UC;" \
 	    "typedef unsigned int UI;" \
@@ -243,11 +243,11 @@ conf_cxxt_probe_endianness() {
 	    "  u.i = (UC)'g' * M * M * M + (UC)'r' * M * M + \
 		     (UC)'o' * M + (UC)'k';" \
 	    "  if (memcmp(&u, \"grok\", 4) == 0)" \
-	    "    cout << \"big-endian\" << endl;" \
+	    "    puts(\"big-endian\");" \
 	    "  else if (memcmp(&u, \"korg\", 4) == 0)" \
-	    "    cout << \"little-endian\" << endl;" \
+	    "    puts(\"little-endian\");" \
 	    "  else if (memcmp(&u, \"rgko\", 4) == 0)" \
-	    "    cout << \"pdp-endian\" << endl;" \
+	    "    puts(\"pdp-endian\");" \
 	    "  else" \
 	    "    return 1;" \
 	    "  return 0;" \
@@ -325,8 +325,8 @@ conf_cxxt_probe_wchar_typ() {
 	conf__blare_test 'checking target-side type equivalent to wchar_t'
 	prog="`conf__mktemp lolwutconf`"
 	if conf__cxxt_compile_prog "$prog" \
+	    "#include <cstdio>" \
 	    "#include <cstring>" \
-	    "#include <iostream>" \
 	    "using namespace std;" \
 	    "int main() {" \
 	    "  static const char16_t c16s[] = u\"\\u263a\\u0001f634\";" \
@@ -334,10 +334,10 @@ conf_cxxt_probe_wchar_typ() {
 	    "  static const wchar_t wcs[] = L\"\\u263a\\U0001f634\";" \
 	    "  if (sizeof(c16s) == sizeof(wcs) &&" \
 	    "   memcmp(c16s, wcs, sizeof(c16s)) == 0)" \
-	    "    cout << \"char16_t\" << endl;" \
+	    "    puts(\"char16_t\");" \
 	    "  else if (sizeof(c32s) == sizeof(wcs) &&" \
 	    "   memcmp(c32s, wcs, sizeof(c32s)) == 0)" \
-	    "    cout << \"char32_t\" << endl;" \
+	    "    puts(\"char32_t\");" \
 	    "  else" \
 	    "    return 1;" \
 	    "  return 0;" \
@@ -572,6 +572,10 @@ conf_cxxt_probe_const_val() {
 	then	use_cinttypes=1
 	else	use_cinttypes=0
 	fi
+	#
+	# Avoid using the \n sequence in the C++ code -- some Bourne shells
+	# turn it into a newline before writing it to the output file.
+	#
 	if conf__cxxt_compile_prog "$prog" \
 	    ${1+"$@"} \
 	    "#if $use_cinttypes" \
@@ -580,30 +584,26 @@ conf_cxxt_probe_const_val() {
 	    "# include <inttypes.h>" \
 	    "#endif" \
 	    "#include <climits>" \
-	    "#include <iostream>" \
-	    "#include <iomanip>" \
+	    "#include <cstdio>" \
 	    "#include <type_traits>" \
 	    "int main() {" \
 	    "#if $use_cinttypes" \
 	    "  using std::intmax_t;" \
+	    "  using std::uintmax_t;" \
 	    "#endif" \
 	    "  auto c = ($const);" \
 	    "  if (!std::is_integral<__typeof(c)>::value &&" \
 	    "      !std::is_enum<__typeof(c)>::value)" \
 	    "    return 0;" \
-	    "  std::cout << std::hex;" \
-	    "  if (c >= CHAR_MIN && c < 0)" \
-	    "    std::cout << \"-0x\" << (int)(-c);" \
-	    "  else if (c >= 0 && c <= UCHAR_MAX)" \
-	    "    std::cout << \"0x\" << (int)c;" \
-	    "  else if (c >= 0)" \
-	    "    std::cout << \"0x\" << c;" \
-	    "  else if (c == INTMAX_MIN)" \
-	    "    std::cout << \"(-1-0x\" << (-1 - INTMAX_MIN) << ')';" \
-	    "  else" \
-	    "    std::cout << \"(-0x\" << (-(intmax_t)c) << ')';" \
-	    "  std::cout << std::endl;" \
-	    "  return 0;" \
+	    '  if (c >= 0)' \
+	    '    std::printf("%#" PRIxMAX, (uintmax_t)c);' \
+	    '  else if (c == INTMAX_MIN)' \
+	    '    std::printf("(-1-%#" PRIxMAX ")",' \
+	    '     (uintmax_t)(-1 - INTMAX_MIN));' \
+	    '  else' \
+	    '    std::printf("-%#" PRIxMAX, (uintmax_t)(-(intmax_t)c));' \
+	    '  puts("");' \
+	    '  return 0;' \
 	    "}"
 	then	val="`$conf_Target_exec ./"$prog"`"
 	else	val=

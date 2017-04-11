@@ -256,8 +256,8 @@ conf_cxx_probe_endianness() {
 	conf__blare_test "testing host-side byte order"
 	prog="`conf__mktemp lolwutconf`"
 	if conf__cxx_compile_prog "$prog" \
+	    "#include <cstdio>" \
 	    "#include <cstring>" \
-	    "#include <iostream>" \
 	    "using namespace std;" \
 	    "typedef unsigned char UC;" \
 	    "typedef unsigned int UI;" \
@@ -268,11 +268,11 @@ conf_cxx_probe_endianness() {
 	    "  u.i = (UC)'g' * M * M * M + (UC)'r' * M * M + \
 		     (UC)'o' * M + (UC)'k';" \
 	    "  if (memcmp(&u, \"grok\", 4) == 0)" \
-	    "    cout << \"big-endian\" << endl;" \
+	    "    puts(\"big-endian\");" \
 	    "  else if (memcmp(&u, \"korg\", 4) == 0)" \
-	    "    cout << \"little-endian\" << endl;" \
+	    "    puts(\"little-endian\");" \
 	    "  else if (memcmp(&u, \"rgko\", 4) == 0)" \
-	    "    cout << \"pdp-endian\" << endl;" \
+	    "    puts(\"pdp-endian\");" \
 	    "  else" \
 	    "    return 1;" \
 	    "  return 0;" \

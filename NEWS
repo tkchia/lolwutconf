@@ -1,3 +1,17 @@
+2017-04-11	"Two heads are more numerous than one."  (2)
+
+		bfd.inc :
+		- main() -> main(void)
+
+		c++.common.inc ,
+		c++.inc ,
+		c++.target.inc :
+		- now uses <cstdio> rather than <iostream>
+
+		c.inc ,
+		c.target.inc :
+		- now uses C rather than C++ (argh!)
+
 2017-02-01	"Two heads are more numerous than one."
 
 		escape.awk :

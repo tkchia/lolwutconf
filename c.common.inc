@@ -16,7 +16,7 @@ conf__cc_chk_compiler_with() {
 	(
 		for line in ${1+"$@"}
 			do echo "$line"; done
-		echo 'int main() { return 0; }'
+		echo 'int main(void) { return 0; }'
 	) >"$src"
 	res=0
 	if $cc $cppflags $cflags $ldflags -o"$prog" "$src" $ldlibs \
