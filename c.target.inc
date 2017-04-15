@@ -10,7 +10,7 @@ conf__ct_chk_compiler_with() {
 	shift 2
 	if conf__cc_chk_compiler_with "$conf_Host_exec $CC_FOR_TARGET" \
 	    "$CPPFLAGS_FOR_TARGET" "$cflags" "$LDFLAGS_FOR_TARGET" \
-	    "$ldlibs" "$conf_Target_exec" ${1+"$@"}
+	    "$ldlibs" "$conf_Target_exec" "$conf_Target_exe_ext" ${1+"$@"}
 	then	return 0
 	else	return $?
 	fi
@@ -41,11 +41,11 @@ conf_ct_chk_compiler_and_executor() {
 		then return 0; fi
 	conf__add_var CC_FOR_TARGET CPPFLAGS_FOR_TARGET CFLAGS_FOR_TARGET \
 	    LDFLAGS_FOR_TARGET LDLIBS_FOR_TARGET \
-	    conf_Have_ct_compiler conf_Target_exec
+	    conf_Have_ct_compiler conf_Target_exec conf_Target_exe_ext
 	conf_c_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
-	try_thumb=no
+	conf__probe_exe_ext target "$conf_Crosst_tag" conf_Target_exe_ext
 	conf__blare_test 'deciding C compiler for target'
 	if test -n "$conf_Crosst_tag" -a -z "$CC_FOR_TARGET"; then
 		conf__cc_find_cross_compiler "$conf_Crosst_tag" \
@@ -67,7 +67,7 @@ conf_ct_chk_compiler_and_executor() {
 		    "$conf_Host_exec $CC_FOR_TARGET" \
 		    "$CPPFLAGS_FOR_TARGET" "$CFLAGS_FOR_TARGET" \
 		    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" \
-		    conf_Target_exec
+		    "$conf_Target_exe_ext" conf_Target_exec
 	fi
 	conf__blare_res "${conf_Target_exec:-(blank)}"
 	conf__blare_test \
@@ -82,7 +82,8 @@ conf_ct_chk_compiler_and_executor() {
 	fi
 	conf__cc_probe_thumb target "$conf_Host_exec $CC_FOR_TARGET" \
 	    "$CPPFLAGS_FOR_TARGET" CFLAGS_FOR_TARGET \
-	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" "$conf_Target_exec"
+	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" \
+	    "$conf_Target_exec" "$conf_Target_exe_ext"
 }
 
 conf_ct_probe_opt_wrapper() {
@@ -92,7 +93,7 @@ conf_ct_probe_opt_wrapper() {
 	conf__cc_probe_opt_wrapper target \
 	    "$conf_Host_exec $CC_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
 	    "$CFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
-	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" "$conf_Target_exe_ext" \
 	    conf_Have_ct_opt_wrapper
 }
 
@@ -103,7 +104,7 @@ conf_ct_probe_opt_fno_integrated_as() {
 	conf__cc_probe_opt_fno_integrated_as target \
 	    "$conf_Host_exec $CC_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
 	    "$CFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
-	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" "$conf_Target_exe_ext" \
 	    conf_Have_ct_opt_fno_integrated_as
 }
 
@@ -194,7 +195,7 @@ conf_ct_probe_endianness() {
 		then return 0; fi
 	conf__add_var conf_Endianness_ct
 	conf__blare_test "testing target-side byte order"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	if conf__ct_compile_prog "$prog" \
 	    "#include <stdio.h>" \
 	    "#include <string.h>" \
@@ -271,7 +272,7 @@ conf_ct_probe_asm_goto() {
 	conf__add_var conf_Have_asm_goto_ct
 	conf__blare_test \
 	    "checking if target supports __asm goto(...)"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	if conf__ct_compile_prog "$prog" \
 	    'int main(void) {' \
 	    '  __asm goto("" : : : : foo);' \

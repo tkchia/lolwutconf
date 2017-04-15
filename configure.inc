@@ -54,22 +54,22 @@ conf__check_general_sanity() {
 }
 
 conf__mktemp() {
-	local nm sfx
-	if nm="`mktemp "$1".XXXXXXXXXX 2>/dev/null`"; then
+	local nm uniq
+	if nm="`mktemp "$1".XXXXXXXXXX ${2+"--suffix=$2"} 2>/dev/null`"; then
 		echo "$nm"
 	else
 		(
 			set -C
-			sfx=$$
-			until : >"$1.$sfx" 2>/dev/null; do
-				sfx="$sfx+"
-				if test ${#sfx} -gt 1000; then
+			uniq=$$
+			until : >"$1.$uniq$2" 2>/dev/null; do
+				uniq="$uniq+"
+				if test ${#uniq} -gt 1000; then
 					conf__barf "cannot create" \
 					    "temporary file" \
-					    "with name starting $1...!"
+					    "with name $1.(...)$2!"
 				fi
 			done
-			echo "$1.$sfx"
+			echo "$1.$uniq$2"
 		)
 	fi
 }
@@ -136,12 +136,14 @@ conf__help() {
 	me="`basename $0`"
 	conf__blare "usage:"
 	conf__blare "    $me [--srcdir=(dir)] [--prefix=(dir)] \\"
-    if test yes = "$conf_Is_canadian_cross"; then
 	conf__blare "        [--host=(platform)] [--host-exec=[(runner)]] \\"
-	conf__blare "        [--target-prefix=(dir)] \\"
-	conf__blare "        [--target=(platform)] [--target-exec=[(runner)]]"
+    if test yes = "$conf_Is_canadian_cross"; then
+	conf__blare "        [--host-exe-ext=[(ext)] \\"
+	conf__blare "        [--target-prefix=(dir)] [--target=(platform)] \\"
+	conf__blare "        [--target-exec=[(runner)]] ` \
+				`[--target-exe-ext=[(ext)]"
     else
-	conf__blare "        [--host=(platform)] [--host-exec=[(runner)]]"
+	conf__blare "        [--host-exe-ext=[(ext)]"
     fi
 	conf__blare
 	conf__blare "environment variables used:"
@@ -214,11 +216,15 @@ conf__help() {
 	conf__blare "    programs built for the host sytem.  If --host="
 	conf__blare "    appears but not --host-exec, \`$me' will try to"
 	conf__blare "    look for a corresponding Qemu user-mode emulator,"
-	conf__blare "    e.g. qemu-arm."
+	conf__blare "    e.g. \`qemu-arm'."
+	conf__blare
+	conf__blare "  * --host-exe-ext=(ext) gives a file name extension"
+	conf__blare "    to use for compiled host-side programs, e.g. \`.exe'."
 	conf__blare
     if test yes = "$conf_Is_canadian_cross"; then
 	conf__blare "  * --target-exec=(runner) specifies a command for"
-	conf__blare "    running programs built for the target system."
+	conf__blare "    running programs built for the target system, while"
+	conf__blare "    --target-exe-ext=(ext) gives a target-side extension."
 	conf__blare
 	conf__blare "  * The host installation directory (--prefix=) defaults"
 	conf__blare "    to /usr/local.  \`$me' tries to derive something"
@@ -334,6 +340,9 @@ conf_begin() {
 	conf_Cross_tag=
 	conf_Crosst_tag=
 	unset conf_Host_exec
+	unset conf_Host_exe_ext
+	unset conf_Target_exec
+	unset conf_Target_exe_ext
 	conf_Use_vars=' SHELL '
 	conf_Use_mods=' configure '
 	conf_Mode=conf
@@ -349,12 +358,16 @@ conf_begin() {
 			conf_Cross_tag="`echo "$opt" | sed s,^[^=]*=,,`";;
 		    --host-exec=*)
 			conf_Host_exec="`echo "$opt" | sed s,^[^=]*=,,`";;
+		    --host-exe-ext=*)
+			conf_Host_exe_ext="`echo "$opt" | sed s,^[^=]*=,,`";;
 		    --target-prefix=?*)
 			conf_Target_prefix="`echo "$opt" | sed s,^[^=]*=,,`";;
 		    --target=?*)
 			conf_Crosst_tag="`echo "$opt" | sed s,^[^=]*=,,`";;
 		    --target-exec=*)
 			conf_Target_exec="`echo "$opt" | sed s,^[^=]*=,,`";;
+		    --target-exe-ext=*)
+			conf_Target_exe_ext="`echo "$opt" | sed s,^[^=]*=,,`";;
 		    *)	conf_Mode=help;;
 		esac
 	done

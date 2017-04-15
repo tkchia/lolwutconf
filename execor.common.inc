@@ -1,5 +1,27 @@
 #!/bin/sh
 
+# Decide the file name extension to use for host-side/target-side programs.
+#
+conf__probe_exe_ext() {
+	local plat cross_tag ext ext_var
+	if test $# != 3
+		then conf__barf 'lolwut?!? $% != 5'; fi
+	if conf__in_help_mode
+		then return 0; fi
+	plat="$1"
+	cross_tag="$2"
+	ext_var="$3"
+	if eval test -n \"\${$ext_var+set}\"
+		then return 0; fi
+	conf__blare_test "deciding program file name extension for $plat"
+	case "$cross_tag" in
+	    ia16-elf)
+		eval "$ext_var"=.exe;;
+	    *)	eval "$ext_var"=;;
+	esac
+	eval conf__blare_res \"\${$ext_var:-\(blank\)}\"
+}
+
 # Find a command line that can execute the named program.  Then delete the
 # program.
 #
@@ -38,6 +60,8 @@ conf__find_execor() {
 		set '--' $cross_tag
 		execor=qemu-"$1"
 		IFS="$save_ifs";;
+	    ia16-elf)
+		execor='dosemu.bin -I video{none}';;
 	    *)	# OK, we do not really know what to do here...
 		;;
 	esac

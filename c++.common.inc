@@ -3,15 +3,17 @@
 conf_mod execor.common
 
 conf__cxxc_chk_compiler_with() {
-	local cxx cppflags cxxflags ldflags ldlibs execor prog src res line
+	local cxx cppflags cxxflags ldflags ldlibs execor exeext prog src \
+	    res line
 	cxx="$1"
 	cppflags="$2"
 	cxxflags="$3"
 	ldflags="$4"
 	ldlibs="$5"
 	execor="$6"
-	shift 6
-	prog="`conf__mktemp lolwutconf`"
+	exeext="$7"
+	shift 7
+	prog="`conf__mktemp lolwutconf "$exeext"`"
 	src="$prog.cc"
 	(
 		for line in ${1+"$@"}
@@ -95,10 +97,10 @@ conf__cxxc_find_cross_compiler() {
 }
 
 conf__cxxc_find_execor() {
-	local plat cross_tag cxx cppflags cxxflags ldflags ldlibs execor_var \
-	    save_ifs ld_prefix
-	if test $# != 8
-		then conf__barf 'lolwut?!? $# != 8'; fi
+	local plat cross_tag cxx cppflags cxxflags ldflags ldlibs exeext \
+	    execor_var save_ifs ld_prefix
+	if test $# != 9
+		then conf__barf 'lolwut?!? $# != 9'; fi
 	plat="$1"
 	cross_tag="$2"
 	cxx="$3"
@@ -106,9 +108,10 @@ conf__cxxc_find_execor() {
 	cxxflags="$5"
 	ldflags="$6"
 	ldlibs="$7"
-	execor_var="$8"
+	exeext="$8"
+	execor_var="$9"
 	ld_prefix="`conf__find_good_runtime_prefix "$cxx" "$cxxflags"`"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$exeext"`"
 	src="$prog.cc"
 	echo 'int main() { return 0; }' >"$src"
 	res=0
@@ -124,7 +127,8 @@ conf__cxxc_find_execor() {
 }
 
 conf__cxxc_probe_thumb() {
-	local plat cxx cppflags cxxflags_var ldflags ldlibs execor cxxflags
+	local plat cxx cppflags cxxflags_var ldflags ldlibs execor exeext \
+	    cxxflags
 	plat="$1"
 	cxx="$2"
 	cppflags="$3"
@@ -132,12 +136,13 @@ conf__cxxc_probe_thumb() {
 	ldflags="$5"
 	ldlibs="$6"
 	execor="$7"
-	shift 7
+	exeext="$8"
+	shift 8
 	eval "cxxflags=\"\$$cxxflags_var\""
 	conf__blare_test "checking if Thumb mode is relevant for" \
 	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
-	    "$ldflags" "$ldlibs" "$execor" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
 	    '#ifdef __arm__' '#error' '#endif'
 	then	conf__blare_res no
 		return 0
@@ -146,7 +151,7 @@ conf__cxxc_probe_thumb() {
 	conf__blare_test "checking if Thumb mode is already enabled for" \
 	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
-	    "$ldflags" "$ldlibs" "$execor" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'
 	then	conf__blare_res yes
 		return 0
@@ -155,7 +160,7 @@ conf__cxxc_probe_thumb() {
 	conf__blare_test "checking command to enable Thumb mode for" \
 	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" \
-	    "$cxxflags -mthumb" "$ldflags" "$ldlibs" "$execor" \
+	    "$cxxflags -mthumb" "$ldflags" "$ldlibs" "$execor" "$exeext" \
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'
 	then	cxxflags="$cxxflags -mthumb"
 		eval "$cxxflags_var"='"$cxxflags"'
@@ -165,7 +170,7 @@ conf__cxxc_probe_thumb() {
 }
 
 conf__cxxc_probe_opt_wrapper() {
-	local plat cxx cppflags cxxflags ldflags ldlibs execor var \
+	local plat cxx cppflags cxxflags ldflags ldlibs execor exeext var \
 	    wrapper holder token got_token
 	plat="$1"
 	cxx="$2"
@@ -174,8 +179,9 @@ conf__cxxc_probe_opt_wrapper() {
 	ldflags="$5"
 	ldlibs="$6"
 	execor="$7"
-	var="$8"
-	shift 8
+	exeext="$8"
+	var="$9"
+	shift 9
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
@@ -195,7 +201,7 @@ conf__cxxc_probe_opt_wrapper() {
 	chmod u+x "$wrapper"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" \
 	    "$cxxflags -wrapper $wrapper" "$ldflags" "$ldlibs" "$execor" \
-	    ${1+"$@"} && \
+	    "$exeext" ${1+"$@"} && \
 	   read got_token <"$holder" && \
 	   test "$token" = "$got_token"; then
 		eval $var=yes
@@ -207,7 +213,7 @@ conf__cxxc_probe_opt_wrapper() {
 }
 
 conf__cxxc_probe_opt() {
-	local opt plat cxx cppflags cxxflags ldflags ldlibs execor var
+	local opt plat cxx cppflags cxxflags ldflags ldlibs execor exeext var
 	opt="$1"
 	plat="$2"
 	cxx="$3"
@@ -216,15 +222,17 @@ conf__cxxc_probe_opt() {
 	ldflags="$6"
 	ldlibs="$7"
 	execor="$8"
-	var="$9"
+	exeext="$9"
 	shift 9
+	var="$1"
+	shift
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
 	conf__blare_test \
 	    "checking if $plat-side C++ compiler supports $opt"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags $opt" \
-	    "$ldflags" "$ldlibs" "$execor" ${1+"$@"}; then
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"}; then
 		eval $var=yes
 	else
 		eval $var=no
@@ -233,8 +241,8 @@ conf__cxxc_probe_opt() {
 }
 
 conf__cxxc_probe_func() {
-	local plat cxx cppflags cxxflags ldflags ldlibs execor func n_args \
-	    var templ proto args i
+	local plat cxx cppflags cxxflags ldflags ldlibs execor exeext \
+	    func n_args var templ proto args i
 	plat="$1"
 	cxx="$2"
 	cppflags="$3"
@@ -242,11 +250,12 @@ conf__cxxc_probe_func() {
 	ldflags="$5"
 	ldlibs="$6"
 	execor="$7"
-	func="$8"
-	n_args="$9"
+	exeext="$8"
+	func="$9"
 	shift 9
-	var="$1"
-	shift
+	n_args="$1"
+	var="$2"
+	shift 2
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
@@ -267,7 +276,7 @@ conf__cxxc_probe_func() {
 		templ="template<$templ>"
 	fi
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
-	    "$ldflags" "$ldlibs" "$execor" ${1+"$@"} \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"} \
 	    "$templ void conf_foo($proto) { $func($args); }"
 	then    eval $var=yes
 	else    eval $var=no

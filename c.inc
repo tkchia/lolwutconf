@@ -8,7 +8,8 @@ conf__c_chk_compiler_with() {
 	ldlibs="$2"
 	shift 2
 	if conf__cc_chk_compiler_with "$CC" "$CPPFLAGS" "$cflags" \
-	    "$LDFLAGS" "$ldlibs" "$conf_Host_exec" ${1+"$@"}
+	    "$LDFLAGS" "$ldlibs" "$conf_Host_exec" "$conf_Host_exe_ext" \
+	    ${1+"$@"}
 	then	return 0
 	else	return $?
 	fi
@@ -38,9 +39,10 @@ conf_c_chk_compiler_and_executor() {
 	if test -n "$conf_Have_c_compiler"
 		then return 0; fi
 	conf__add_var CC CPPFLAGS CFLAGS LDFLAGS LDLIBS conf_Have_c_compiler \
-	    conf_Host_exec
+	    conf_Host_exec conf_Host_exe_ext
 	if conf__in_help_mode
 		then return 0; fi
+	conf__probe_exe_ext host "$conf_Cross_tag" conf_Host_exe_ext
 	conf__blare_test 'deciding C compiler for host'
 	if test -n "$conf_Cross_tag" -a -z "$CC"; then
 		conf__cc_find_cross_compiler "$conf_Cross_tag" CC CFLAGS
@@ -53,7 +55,7 @@ conf_c_chk_compiler_and_executor() {
 	if test set != "${conf_Host_exec+set}"; then
 		conf__cc_find_execor host "$conf_Cross_tag" \
 		    "$CC" "$CPPFLAGS" "$CFLAGS" "$LDFLAGS" "$LDLIBS" \
-		    conf_Host_exec
+		    "$conf_Host_exe_ext" conf_Host_exec
 	fi
 	conf__blare_res "${conf_Host_exec:-(blank)}"
 	conf__blare_test 'checking if C compiler and executor for host work'
@@ -65,7 +67,7 @@ conf_c_chk_compiler_and_executor() {
 		conf__barf 'C compiler and/or executor does not work!'
 	fi
 	conf__cc_probe_thumb host "$CC" "$CPPFLAGS" CFLAGS "$LDFLAGS" \
-	    "$LDLIBS" "$conf_Host_exec"
+	    "$LDLIBS" "$conf_Host_exec" "$conf_Host_exe_ext"
 }
 
 conf_c_probe_opt_fno_integrated_as() {
@@ -74,7 +76,7 @@ conf_c_probe_opt_fno_integrated_as() {
 		then return 0; fi
 	conf__cc_probe_opt_fno_integrated_as host "$CC" "$CPPFLAGS" \
 	    "$CFLAGS" "$LDFLAGS" "$LDLIBS" "$conf_Host_exec" \
-	    conf_Have_c_opt_fno_integrated_as
+	    "$conf_Host_exe_ext" conf_Have_c_opt_fno_integrated_as
 }
 
 conf_c_probe_typ() {
@@ -139,7 +141,7 @@ conf_c_probe_asm_goto() {
 	conf__add_var conf_Have_asm_goto_c
 	conf__blare_test \
 	    "checking if host supports __asm goto(...)"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Host_exe_ext"`"
 	if conf__c_compile_prog "$prog" \
 	    'int main(void) {' \
 	    '  __asm goto("" : : : : foo);' \
@@ -165,8 +167,8 @@ conf_c_probe_func() {
 	shift 2
 	var="conf_Have_c_func_`conf__escape "$func"`"
 	conf__cc_probe_func host "$CC" "$CPPFLAGS" "$CFLAGS" \
-	    "$LDFLAGS" "$LDLIBS" "$conf_Host_exec" "$func" "$n_args" "$var" \
-	    ${1+"$@"}
+	    "$LDFLAGS" "$LDLIBS" "$conf_Host_exec" "$conf_Host_exe_ext" \
+	    "$func" "$n_args" "$var" ${1+"$@"}
 }
 
 conf_c_probe_lib() {
@@ -223,7 +225,7 @@ conf_c_probe_endianness() {
 		then return 0; fi
 	conf__add_var conf_Endianness_c
 	conf__blare_test "testing host-side byte order"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Host_exe_ext"`"
 	if conf__c_compile_prog "$prog" \
 	    "#include <stdio.h>" \
 	    "#include <string.h>" \

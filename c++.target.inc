@@ -10,7 +10,7 @@ conf__cxxt_chk_compiler_with() {
 	shift 2
 	if conf__cxxc_chk_compiler_with "$conf_Host_exec $CXX_FOR_TARGET" \
 	    "$CPPFLAGS_FOR_TARGET" "$cxxflags" "$LDFLAGS_FOR_TARGET" \
-	    "$ldlibs" "$conf_Target_exec" ${1+"$@"}
+	    "$ldlibs" "$conf_Target_exec" "$conf_Target_exe_ext" ${1+"$@"}
 	then	return 0
 	else	return $?
 	fi
@@ -67,7 +67,7 @@ conf_cxxt_chk_compiler_and_executor() {
 		    "$conf_Host_exec $CXX_FOR_TARGET" \
 		    "$CPPFLAGS_FOR_TARGET" "$CXXFLAGS_FOR_TARGET" \
 		    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" \
-		    conf_Target_exec
+		    "$conf_Target_exe_ext" conf_Target_exec
 	fi
 	conf__blare_res "${conf_Target_exec:-(blank)}"
 	conf__blare_test \
@@ -82,7 +82,8 @@ conf_cxxt_chk_compiler_and_executor() {
 	fi
 	conf__cxxc_probe_thumb target "$conf_Host_exec $CXX_FOR_TARGET" \
 	    "$CPPFLAGS_FOR_TARGET" CXXFLAGS_FOR_TARGET \
-	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" "$conf_Target_exec"
+	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    "$conf_Target_exe_ext"
 }
 
 conf_cxxt_probe_cxx11() {
@@ -116,7 +117,7 @@ conf_cxxt_probe_opt_wrapper() {
 	conf__cxxc_probe_opt_wrapper target \
 	    "$conf_Host_exec $CXX_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
 	    "$CXXFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
-	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" "$conf_Target_exe_ext" \
 	    conf_Have_cxxt_opt_wrapper
 }
 
@@ -127,7 +128,7 @@ conf_cxxt_probe_opt_fno_integrated_as() {
 	conf__cxxc_probe_opt -fno-integrated-as target \
 	    "$conf_Host_exec $CXX_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
 	    "$CXXFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
-	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" "$conf_Target_exe_ext" \
 	    conf_Have_cxxt_opt_fno_integrated_as
 }
 
@@ -138,7 +139,7 @@ conf_cxxt_probe_opt_fwritable_strings() {
 	conf__cxxc_probe_opt -fwritable-strings target \
 	    "$conf_Host_exec $CXX_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
 	    "$CXXFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
-	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" "$conf_Target_exe_ext" \
 	    conf_Have_cxxt_opt_fwritable_strings
 }
 
@@ -229,7 +230,7 @@ conf_cxxt_probe_endianness() {
 		then return 0; fi
 	conf__add_var conf_Endianness_cxxt
 	conf__blare_test "testing target-side byte order"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	if conf__cxxt_compile_prog "$prog" \
 	    "#include <cstdio>" \
 	    "#include <cstring>" \
@@ -323,7 +324,7 @@ conf_cxxt_probe_wchar_typ() {
 		then return 0; fi
 	conf__add_var conf_Typ_wchar_cxxt
 	conf__blare_test 'checking target-side type equivalent to wchar_t'
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	if conf__cxxt_compile_prog "$prog" \
 	    "#include <cstdio>" \
 	    "#include <cstring>" \
@@ -362,7 +363,7 @@ conf_cxxt_probe_overridable_csu_init() {
 		then return 0; fi
 	conf__add_var conf_Have_overridable_csu_init_cxxt
 	conf__blare_test "checking if target's __libc_csu_init is overridable"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	#
 	# Although we only want to override __libc_csu_init(...), we need to
 	# also define __libc_csu_fini().  Both are likely to be defined in
@@ -434,7 +435,7 @@ conf_cxxt_probe_ctor_priority() {
 	conf__add_var conf_Have_ctor_priority_cxxt
 	conf__blare_test \
 	    "checking if target supports __attribute__((constructor(.)))"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	if conf__cxxt_compile_prog "$prog" \
 	    'static int baz = 2;' \
 	    '__attribute__((constructor(456))) void foo(void)' \
@@ -461,7 +462,7 @@ conf_cxxt_probe_asm_goto() {
 	conf__add_var conf_Have_asm_goto_cxxt
 	conf__blare_test \
 	    "checking if target supports __asm goto(...)"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	if conf__cxxt_compile_prog "$prog" \
 	    'int main() {' \
 	    '  __asm goto("" : : : : foo);' \
@@ -489,7 +490,7 @@ conf_cxxt_probe_func() {
 	conf__cxxc_probe_func target "$CXX_FOR_TARGET" \
 	    "$CPPFLAGS_FOR_TARGET" "$CXXFLAGS_FOR_TARGET" \
 	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
-	    "$func" "$n_args" "$var" ${1+"$@"}
+	    "$conf_Target_exe_ext" "$func" "$n_args" "$var" ${1+"$@"}
 }
 
 conf_cxxt_probe_impld_func() {
@@ -512,7 +513,7 @@ conf_cxxt_probe_impld_func() {
 	fi
 	conf__blare_test \
 	    "testing if target-side C++ function $func is implemented"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	if conf__cxxt_compile_prog "$prog" \
 	    "#include <errno.h>" \
 	    ${1+"$@"} \
@@ -567,7 +568,7 @@ conf_cxxt_probe_const_val() {
 	var="conf_Val_cxxt_const_`conf__escape "$const"`"
 	conf__add_var "$var"
 	conf__blare_test "getting value of target-side C++ constant $const"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	if test yes = "$conf_Have_cxxt_typ_std_0intmax_t"
 	then	use_cinttypes=1
 	else	use_cinttypes=0

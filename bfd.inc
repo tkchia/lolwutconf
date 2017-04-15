@@ -4,8 +4,8 @@ conf_mod c c.target
 
 conf__bfd_chk_strip_with() {
 	local prog sprog res
-	prog="`conf__mktemp lolwutconf`"
-	sprog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
+	sprog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	conf__ct_compile_prog "$prog" "int main(void) { return 0; }"
 	if $conf_Host_exec $STRIP_FOR_TARGET ${1+"$@"} -o "$sprog" "$prog" \
 	    >/dev/null 2>&1 && \
@@ -82,7 +82,7 @@ conf_bfd_chk_strip() {
 		conf_Have_bfd_strip=yes
 	else
 		conf__blare_res no
-		conf__barf 'strip program does notwork!'
+		conf__barf 'strip program does not work!'
 	fi
 }
 

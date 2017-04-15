@@ -1,3 +1,32 @@
+2017-04-15	Partial support for Sourcery ia16-elf-gcc.
+
+		configure.inc :
+		- added two command line options --host-exe-ext= and
+		  --target-exe-ext=, and two configuration variables
+		  $conf_Host_exe_ext and $conf_Target_exe_ext
+		- conf__mktemp() now accepts an extension as a 2nd argument
+
+		bfd.inc :
+		- now uses $conf_Target_exe_ext
+		- fixed typo
+
+		c.inc ,
+		c++.inc :
+		- now sets and uses $conf_Host_exe_ext
+
+		c.target.inc ,
+		c++.target.inc :
+		- now sets and uses $conf_Target_exe_ext
+
+		c.common.inc ,
+		c++.common.inc :
+		- internal functions now take an extra $exeext argument
+
+		execor.common.inc :
+		- added conf__probe_exe_ext()
+		- conf__find_execor() now handles ia16-elf host or target
+		  specifier
+
 2017-04-11	"Two heads are more numerous than one."  (2)
 
 		bfd.inc :

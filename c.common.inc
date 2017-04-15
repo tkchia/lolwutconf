@@ -3,15 +3,17 @@
 conf_mod execor.common
 
 conf__cc_chk_compiler_with() {
-	local cc cppflags cflags ldflags ldlibs execor prog src res line
+	local cc cppflags cflags ldflags ldlibs execor exeext prog src res \
+	    line
 	cc="$1"
 	cppflags="$2"
 	cflags="$3"
 	ldflags="$4"
 	ldlibs="$5"
 	execor="$6"
-	shift 6
-	prog="`conf__mktemp lolwutconf`"
+	exeext="$7"
+	shift 7
+	prog="`conf__mktemp lolwutconf "$exeext"`"
 	src="$prog.c"
 	(
 		for line in ${1+"$@"}
@@ -95,10 +97,10 @@ conf__cc_find_cross_compiler() {
 }
 
 conf__cc_find_execor() {
-	local plat cross_tag cc cppflags cflags ldflags ldlibs execor_var \
-	    save_ifs ld_prefix
-	if test $# != 8
-		then conf__barf 'lolwut?!? $# != 8'; fi
+	local plat cross_tag cc cppflags cflags ldflags ldlibs exeext \
+	    execor_var save_ifs ld_prefix
+	if test $# != 9
+		then conf__barf 'lolwut?!? $# != 9'; fi
 	plat="$1"
 	cross_tag="$2"
 	cc="$3"
@@ -106,9 +108,10 @@ conf__cc_find_execor() {
 	cflags="$5"
 	ldflags="$6"
 	ldlibs="$7"
-	execor_var="$8"
+	exeext="$8"
+	execor_var="$9"
 	ld_prefix="`conf__find_good_runtime_prefix "$cc" "$cflags"`"
-	prog="`conf__mktemp lolwutconf`"
+	prog="`conf__mktemp lolwutconf "$exeext"`"
 	src="$prog.c"
 	echo 'int main(void) { return 0; }' >"$src"
 	res=0
@@ -124,7 +127,7 @@ conf__cc_find_execor() {
 }
 
 conf__cc_probe_thumb() {
-	local plat cc cppflags cflags_var ldflags ldlibs execor cflags
+	local plat cc cppflags cflags_var ldflags ldlibs execor exeext cflags
 	plat="$1"
 	cc="$2"
 	cppflags="$3"
@@ -132,12 +135,13 @@ conf__cc_probe_thumb() {
 	ldflags="$5"
 	ldlibs="$6"
 	execor="$7"
-	shift 7
+	exeext="$8"
+	shift 8
 	eval "cflags=\"\$$cflags_var\""
 	conf__blare_test "checking if Thumb mode is relevant for" \
 	    "$plat-side C compiler"
 	if conf__cc_chk_compiler_with "$cc" "$cppflags" "$cflags" \
-	    "$ldflags" "$ldlibs" "$execor" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
 	    '#ifdef __arm__' '#error' '#endif'
 	then	conf__blare_res no
 		return 0
@@ -146,7 +150,7 @@ conf__cc_probe_thumb() {
 	conf__blare_test "checking if Thumb mode is already enabled for" \
 	    "$plat-side C compiler"
 	if conf__cc_chk_compiler_with "$cc" "$cppflags" "$cflags" \
-	    "$ldflags" "$ldlibs" "$execor" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'
 	then	conf__blare_res yes
 		return 0
@@ -155,7 +159,7 @@ conf__cc_probe_thumb() {
 	conf__blare_test "checking command to enable Thumb mode for" \
 	    "$plat-side C compiler"
 	if conf__cc_chk_compiler_with "$cc" "$cppflags" \
-	    "$cflags -mthumb" "$ldflags" "$ldlibs" "$execor" \
+	    "$cflags -mthumb" "$ldflags" "$ldlibs" "$execor" "$exeext" \
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'
 	then	cflags="$cflags -mthumb"
 		eval "$cflags_var"='"$cflags"'
@@ -165,7 +169,7 @@ conf__cc_probe_thumb() {
 }
 
 conf__cc_probe_opt_wrapper() {
-	local plat cc cppflags cflags ldflags ldlibs execor var \
+	local plat cc cppflags cflags ldflags ldlibs execor exeext var \
 	    wrapper holder token got_token
 	plat="$1"
 	cc="$2"
@@ -174,8 +178,9 @@ conf__cc_probe_opt_wrapper() {
 	ldflags="$5"
 	ldlibs="$6"
 	execor="$7"
-	var="$8"
-	shift 8
+	exeext="$8"
+	var="$9"
+	shift 9
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
@@ -195,7 +200,7 @@ conf__cc_probe_opt_wrapper() {
 	chmod u+x "$wrapper"
 	if conf__cc_chk_compiler_with "$cc" "$cppflags" \
 	    "$cflags -wrapper $wrapper" "$ldflags" "$ldlibs" "$execor" \
-	    ${1+"$@"} && \
+	    "$exeext" ${1+"$@"} && \
 	   read got_token <"$holder" && \
 	   test "$token" = "$got_token"; then
 		eval $var=yes
@@ -207,7 +212,7 @@ conf__cc_probe_opt_wrapper() {
 }
 
 conf__cc_probe_opt_fno_integrated_as() {
-	local plat cc cppflags cflags ldflags ldlibs execor var
+	local plat cc cppflags cflags ldflags ldlibs execor exeext var
 	plat="$1"
 	cc="$2"
 	cppflags="$3"
@@ -215,8 +220,9 @@ conf__cc_probe_opt_fno_integrated_as() {
 	ldflags="$5"
 	ldlibs="$6"
 	execor="$7"
-	var="$8"
-	shift 8
+	exeext="$8"
+	var="$9"
+	shift 9
 	if eval test -n \"\$$var\"
 		then return 0; fi
 	conf__add_var "$var"
@@ -224,7 +230,7 @@ conf__cc_probe_opt_fno_integrated_as() {
 	    "checking if $plat-side C compiler supports -fno-integrated-as"
 	if conf__cc_chk_compiler_with "$cc" "$cppflags" \
 	    "$cflags -fno-integrated-as" "$ldflags" "$ldlibs" "$execor" \
-	    ${1+"$@"}; then
+	    "$exeext" ${1+"$@"}; then
 		eval $var=yes
 	else
 		eval $var=no
