@@ -68,6 +68,8 @@ conf_c_chk_compiler_and_executor() {
 	fi
 	conf__cc_probe_thumb host "$CC" "$CPPFLAGS" CFLAGS "$LDFLAGS" \
 	    "$LDLIBS" "$conf_Host_exec" "$conf_Host_exe_ext"
+	conf__cc_probe_lbss_fix host "$CC" "$CPPFLAGS" "$CFLAGS" LDFLAGS \
+	    "$LDLIBS" "$conf_Host_exec" "$conf_Host_exe_ext"
 }
 
 conf_c_probe_opt_fno_integrated_as() {

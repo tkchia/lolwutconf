@@ -68,6 +68,8 @@ conf_cxx_chk_compiler_and_executor() {
 	fi
 	conf__cxxc_probe_thumb host "$CXX" "$CPPFLAGS" CXXFLAGS "$LDFLAGS" \
 	    "$LDLIBS" "$conf_Host_exec" "$conf_Host_exe_ext"
+	conf__cxxc_probe_lbss_fix host "$CXX" "$CPPFLAGS" "$CXXFLAGS" LDFLAGS \
+	    "$LDLIBS" "$conf_Host_exec" "$conf_Host_exe_ext"
 }
 
 conf_cxx_probe_cxx11() {

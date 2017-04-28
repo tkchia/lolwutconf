@@ -84,6 +84,10 @@ conf_ct_chk_compiler_and_executor() {
 	    "$CPPFLAGS_FOR_TARGET" CFLAGS_FOR_TARGET \
 	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" \
 	    "$conf_Target_exec" "$conf_Target_exe_ext"
+	conf__cc_probe_lbss_fix target "$conf_Host_exec $CC_FOR_TARGET" \
+	    "$CPPFLAGS_FOR_TARGET" "$CFLAGS_FOR_TARGET" \
+	    LDFLAGS_FOR_TARGET "$LDLIBS_FOR_TARGET" \
+	    "$conf_Target_exec" "$conf_Target_exe_ext"
 }
 
 conf_ct_probe_opt_wrapper() {

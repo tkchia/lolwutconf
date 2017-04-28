@@ -163,8 +163,54 @@ conf__cc_probe_thumb() {
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'
 	then	cflags="$cflags -mthumb"
 		eval "$cflags_var"='"$cflags"'
-		conf__blare_res "$cc $cppflags $cflags"
+		conf__blare_res "$cc $cppflags $cflags $ldflags"
 	else	conf__blare_res '(failed; continuing)'
+	fi
+}
+
+conf__cc_probe_lbss_fix() {
+	local plat cc cppflags cflags ldflags_var ldlibs execor exeext \
+	   ldflags goop
+	plat="$1"
+	cc="$2"
+	cppflags="$3"
+	cflags="$4"
+	ldflags_var="$5"
+	ldlibs="$6"
+	execor="$7"
+	exeext="$8"
+	shift 8
+	eval "ldflags=\"\$$ldflags_var\""
+	conf__blare_test "checking if __lbss fix is needed for" \
+	    "$plat-side C compiler"
+	if conf__cc_chk_compiler_with "$cc" "$cppflags" "$cflags" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
+	    '#ifndef __ia16__' '#error' '#endif' \
+	    '#include <stdlib.h>' \
+	    'extern char __sbss[], __ebss[], __lbss[];' \
+	    '__attribute__((constructor)) static void pre() {' \
+	    '  char *p = __sbss + 2 * (__lbss - __sbss);' \
+	    '  if (p != __ebss && p - 1 != __ebss) {' \
+	    '    __asm volatile(".byte 0x0f, 0x22, 0xc0" : : "a" (0u));' \
+	    '    abort();' \
+	    '  }' \
+	    '}'
+	then
+		conf__blare_res yes
+		goop="-Wl,--wrap=__lbss,` \
+		    `$conf_Lolwutconf_dir/ia16-elf-lbss-fix.ld"
+		conf__blare_test "checking command to enable __lbss fix" \
+		    "for $plat-side C compiler"
+		if conf__cc_chk_compiler_with "$cc" "$cppflags" "$cflags" \
+		    "$ldflags $goop" "$ldlibs" "$execor" "$exeext"
+		then	ldflags="$ldflags $goop"
+			eval "$ldflags_var"='"$ldflags"'
+			conf__blare_res "$cc $cppflags $cflags $ldflags"
+		else	conf__blare_res '(failed; continuing)'
+		fi
+	else
+		conf__blare_res no
+		return 0
 	fi
 }
 

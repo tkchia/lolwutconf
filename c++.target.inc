@@ -45,7 +45,6 @@ conf_cxxt_chk_compiler_and_executor() {
 	conf_cxx_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
-	try_thumb=no
 	conf__blare_test 'deciding C++ compiler for target'
 	if test -n "$conf_Crosst_tag" -a -z "$CXX_FOR_TARGET"; then
 		conf__cxxc_find_cross_compiler "$conf_Crosst_tag" \
@@ -83,6 +82,10 @@ conf_cxxt_chk_compiler_and_executor() {
 	conf__cxxc_probe_thumb target "$conf_Host_exec $CXX_FOR_TARGET" \
 	    "$CPPFLAGS_FOR_TARGET" CXXFLAGS_FOR_TARGET \
 	    "$LDFLAGS_FOR_TARGET" "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
+	    "$conf_Target_exe_ext"
+	conf__cxxc_probe_lbss_fix target "$conf_Host_exec $CXX_FOR_TARGET" \
+	    "$CPPFLAGS_FOR_TARGET" "$CXXFLAGS_FOR_TARGET" \
+	    LDFLAGS_FOR_TARGET "$LDLIBS_FOR_TARGET" "$conf_Target_exec" \
 	    "$conf_Target_exe_ext"
 }
 

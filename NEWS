@@ -5,11 +5,17 @@
 		- now handles ia16-elf platform when probing endianness
 		- fixed bug in wchar_t type probing
 		- now pipes stderr from test programs to /dev/null
+		- added __lbss fix for ia16-elf
 
 		c.inc ,
 		c.target.inc :
 		- now handles ia16-elf platform when probing endianness
 		- now pipes stderr from test programs to /dev/null
+		- added __lbss fix for ia16-elf
+
+		c.common.inc ,
+		c++.common.inc :
+		- added __lbss fix for ia16-elf
 
 		bfd.inc :
 		- now specially handles ia16-elf platform
@@ -17,7 +23,8 @@
 		configure.inc :
 		- now always sets $conf_Lolwutconf_dir to an absolute path
 
-		ia16-elf-strip.pl :
+		ia16-elf-strip.pl ,
+		ia16-elf-lbss-fix.ld :
 		- new
 
 2017-04-15	Partial support for Sourcery ia16-elf-gcc.
