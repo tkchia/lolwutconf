@@ -230,7 +230,11 @@ conf_c_probe_endianness() {
 	    "#include <stdio.h>" \
 	    "#include <string.h>" \
 	    "typedef unsigned char UC;" \
+	    "#ifdef __ia16__" \
+	    "typedef unsigned long UI;" \
+	    "#else" \
 	    "typedef unsigned int UI;" \
+	    "#endif" \
 	    "#define M  ((UI)1 + (UI)(UC)~(UC)0)" \
 	    "static union { UC c[4]; UI i; } u;" \
 	    "int main(void) {" \

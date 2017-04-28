@@ -3,14 +3,22 @@
 conf_mod c c.target
 
 conf__bfd_chk_strip_with() {
-	local prog sprog res
+	local prog sprog res save_ldflags
 	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	sprog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
-	conf__ct_compile_prog "$prog" "int main(void) { return 0; }"
+	case "$conf_Crosst_tag" in
+	    ia16-elf)
+		save_ldflags="$LDFLAGS_FOR_TARGET"
+		LDFLAGS_FOR_TARGET="$LDFLAGS_FOR_TARGET ` \
+		    `-Wl,--oformat=elf32-i386"
+		conf__ct_compile_prog "$prog" "int main(void) { return 0; }"
+		LDFLAGS_FOR_TARGET="$save_ldflags";;
+	    *)	conf__ct_compile_prog "$prog" "int main(void) { return 0; }";;
+	esac
 	if $conf_Host_exec $STRIP_FOR_TARGET ${1+"$@"} -o "$sprog" "$prog" \
 	    >/dev/null 2>&1 && \
 	   test -s "$sprog" && \
-	   $conf_Target_exec ./"$sprog"
+	   $conf_Target_exec ./"$sprog" >/dev/null 2>&1
 	then
 		rm -f "$prog" "$sprog"
 		return 0
@@ -60,19 +68,23 @@ conf_bfd_chk_strip() {
 	conf__blare_test 'deciding program to remove symbols from' \
 	    'target-side programs'
 	if test -z "$STRIP_FOR_TARGET"; then
-		case "$CC_FOR_TARGET" in
-		    *-gcc | *-gcc-* | *-gcc' '* | \
-		    *-clang | *-clang-* | *-clang' '* | \
-		    *-cc | *-cc' '*)
-			STRIP_FOR_TARGET="`echo "$CC_FOR_TARGET" | \
-			    sed -e 's,^[[:space:]]*,,' \
-				-e 's, .*$,,' \
-				-e 's,-gcc$,-strip,' \
-				-e 's,-gcc-.*$,-strip,' \
-				-e 's,-clang$,-strip,' \
-				-e 's,-clang-.*$,-strip,' \
-				-e 's,-cc$,-strip,'`";;
-		    *)	STRIP_FOR_TARGET=strip;;
+		case "$conf_Crosst_tag" in
+		    ia16-elf)
+			STRIP_FOR_TARGET="$conf_Lolwutconf_dir/` \
+			    `ia16-elf-strip.pl";;
+		    *)	case "$CC_FOR_TARGET" in
+			    *-gcc | *-gcc-* | *-clang | *-clang-* | \
+			    *-cc)
+				STRIP_FOR_TARGET="`echo "$CC_FOR_TARGET" | \
+				    sed -e 's,^[[:space:]]*,,' \
+					-e 's, .*$,,' \
+					-e 's,-gcc$,-strip,' \
+					-e 's,-gcc-.*$,-strip,' \
+					-e 's,-clang$,-strip,' \
+					-e 's,-clang-.*$,-strip,' \
+					-e 's,-cc$,-strip,'`";;
+			    *)	STRIP_FOR_TARGET=strip;;
+			esac;;
 		esac
 	fi
 	conf__blare_res "[$conf_Host_exec] $STRIP_FOR_TARGET"

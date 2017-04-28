@@ -236,7 +236,11 @@ conf_cxxt_probe_endianness() {
 	    "#include <cstring>" \
 	    "using namespace std;" \
 	    "typedef unsigned char UC;" \
+	    "#ifdef __ia16__" \
+	    "typedef unsigned long UI;" \
+	    "#else" \
 	    "typedef unsigned int UI;" \
+	    "#endif" \
 	    "#define M  ((UI)1 + (UI)(UC)~(UC)0)" \
 	    "static union { UC c[4]; UI i; } u;" \
 	    "int main() {" \
@@ -254,7 +258,8 @@ conf_cxxt_probe_endianness() {
 	    "  return 0;" \
 	    "}"
 	then
-		conf_Endianness_cxxt="`$conf_Target_exec ./"$prog"`"
+		conf_Endianness_cxxt="`$conf_Target_exec ./"$prog" \
+		    2>/dev/null`"
 		case "$conf_Endianness_cxxt" in
 		    *-endian)	;;
 		    *)		conf_Endianness_cxxt=unknown;;
@@ -330,7 +335,7 @@ conf_cxxt_probe_wchar_typ() {
 	    "#include <cstring>" \
 	    "using namespace std;" \
 	    "int main() {" \
-	    "  static const char16_t c16s[] = u\"\\u263a\\u0001f634\";" \
+	    "  static const char16_t c16s[] = u\"\\u263a\\U0001f634\";" \
 	    "  static const char32_t c32s[] = U\"\\u263a\\U0001f634\";" \
 	    "  static const wchar_t wcs[] = L\"\\u263a\\U0001f634\";" \
 	    "  if (sizeof(c16s) == sizeof(wcs) &&" \
@@ -344,7 +349,7 @@ conf_cxxt_probe_wchar_typ() {
 	    "  return 0;" \
 	    "}"
 	then
-		conf_Typ_wchar_cxxt="`$conf_Target_exec ./"$prog"`"
+		conf_Typ_wchar_cxxt="`$conf_Target_exec ./"$prog" 2>/dev/null`"
 		case "$conf_Typ_wchar_cxxt" in
 		    char16_t | char32_t)	;;
 		    *)				conf_Typ_wchar_cxxt=unknown;;
@@ -606,7 +611,7 @@ conf_cxxt_probe_const_val() {
 	    '  puts("");' \
 	    '  return 0;' \
 	    "}"
-	then	val="`$conf_Target_exec ./"$prog"`"
+	then	val="`$conf_Target_exec ./"$prog" 2>/dev/null`"
 	else	val=
 	fi
 	rm -f "$prog"

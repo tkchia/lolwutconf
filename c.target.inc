@@ -200,7 +200,11 @@ conf_ct_probe_endianness() {
 	    "#include <stdio.h>" \
 	    "#include <string.h>" \
 	    "typedef unsigned char UC;" \
+	    "#ifdef __ia16__" \
+	    "typedef unsigned long UI;" \
+	    "#else" \
 	    "typedef unsigned int UI;" \
+	    "#endif" \
 	    "#define M  ((UI)1 + (UI)(UC)~(UC)0)" \
 	    "static union { UC c[4]; UI i; } u;" \
 	    "int main(void) {" \
@@ -218,7 +222,7 @@ conf_ct_probe_endianness() {
 	    "  return 0;" \
 	    "}"
 	then
-		conf_Endianness_ct="`$conf_Target_exec ./"$prog"`"
+		conf_Endianness_ct="`$conf_Target_exec ./"$prog" 2>/dev/null`"
 		case "$conf_Endianness_ct" in
 		    *-endian)	;;
 		    *)		conf_Endianness_ct=unknown;;

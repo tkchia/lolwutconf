@@ -180,7 +180,7 @@ conf_cxx_probe_asm_goto() {
 	    'foo:' \
 	    '  return 1;' \
 	    '}' && \
-	    $conf_Host_exec ./"$prog"
+	    $conf_Host_exec ./"$prog" 2>/dev/null
 	then    conf_Have_asm_goto_cxx=yes
 	else    conf_Have_asm_goto_cxx=no
 	fi
@@ -262,7 +262,11 @@ conf_cxx_probe_endianness() {
 	    "#include <cstring>" \
 	    "using namespace std;" \
 	    "typedef unsigned char UC;" \
+	    "#ifdef __ia16__" \
+	    "typedef unsigned long UI;" \
+	    "#else" \
 	    "typedef unsigned int UI;" \
+	    "#endif" \
 	    "#define M  ((UI)1 + (UI)(UC)~(UC)0)" \
 	    "static union { UC c[4]; UI i; } u;" \
 	    "int main() {" \
@@ -280,7 +284,7 @@ conf_cxx_probe_endianness() {
 	    "  return 0;" \
 	    "}"
 	then
-		conf_Endianness_cxx="`$conf_Host_exec ./"$prog"`"
+		conf_Endianness_cxx="`$conf_Host_exec ./"$prog" 2>/dev/null`"
 		case "$conf_Endianness_cxx" in
 		    *-endian)	;;
 		    *)		conf_Endianness_cxx=unknown;;
@@ -353,7 +357,7 @@ conf_cxx_probe_wchar_typ() {
 	    "#include <iostream>" \
 	    "using namespace std;" \
 	    "int main() {" \
-	    "  static const char16_t c16s[] = u\"\\u263a\\u0001f634\";" \
+	    "  static const char16_t c16s[] = u\"\\u263a\\U0001f634\";" \
 	    "  static const char32_t c32s[] = U\"\\u263a\\U0001f634\";" \
 	    "  static const wchar_t wcs[] = L\"\\u263a\\U0001f634\";" \
 	    "  if (sizeof(c16s) == sizeof(wcs) &&" \
@@ -367,7 +371,7 @@ conf_cxx_probe_wchar_typ() {
 	    "  return 0;" \
 	    "}"
 	then
-		conf_Typ_wchar_cxx="`$conf_Host_exec ./"$prog"`"
+		conf_Typ_wchar_cxx="`$conf_Host_exec ./"$prog" 2>/dev/null`"
 		case "$conf_Typ_wchar_cxx" in
 		    char16_t | char32_t)	;;
 		    *)				conf_Typ_wchar_cxx=unknown;;

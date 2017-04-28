@@ -329,7 +329,7 @@ conf_begin() {
 	conf__check_general_sanity
 	conf_Srcdir="`dirname "$0"`"
 	if test -e "$conf_Srcdir/lolwutconf/configure.inc"; then
-		conf_Lolwutconf_dir="$conf_Srcdir/lolwutconf"
+		conf_Lolwutconf_dir="`cd $conf_Srcdir/lolwutconf && pwd`"
 	elif test -e "lolwutconf/configure.inc"; then
 		conf_Lolwutconf_dir="`pwd`/lolwutconf"
 	else
