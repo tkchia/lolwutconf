@@ -374,7 +374,7 @@ conf_begin() {
 	if conf__in_help_mode; then :; else
 		conf_Use_vars="$conf_Use_vars` \
 		    `conf_Srcdir conf_Lolwutconf_dir conf_Prefix ` \
-		    `conf_Target_prefix "; fi
+		    `conf_Target_prefix conf_Cross_tag conf_Crosst_tag "; fi
 }
 
 conf_mod() {

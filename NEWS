@@ -1,3 +1,9 @@
+2017-04-30	"2 is not equal to 3 -- not even for large values of 2."
+
+		configure.inc :
+		- now records $conf_Cross_tag and $conf_Crosst_tag values in
+		  config.cache
+
 2017-04-28	Further beefed up Sourcery ia16-elf-gcc support.
 
 		c++.inc ,
