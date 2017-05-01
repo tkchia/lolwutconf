@@ -1,3 +1,12 @@
+2017-05-01	"2 is not equal to 3 -- not even for large values of 2."  (2)
+
+		execor.common.inc :
+		- now runs dosemu.bin via our own wrapper script
+
+		dosemu-wrapper.sh :
+		- new; passes `cpuemu vm86sim' to dosemu.bin to overcome a
+		  "leavedos(Interp86|3056)" JIT bug
+
 2017-04-30	"2 is not equal to 3 -- not even for large values of 2."
 
 		configure.inc :

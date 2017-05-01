@@ -61,7 +61,7 @@ conf__find_execor() {
 		execor=qemu-"$1"
 		IFS="$save_ifs";;
 	    ia16-elf)
-		execor='dosemu.bin -I video{none}';;
+		execor="$conf_Lolwutconf_dir/dosemu-wrapper.sh";;
 	    *)	# OK, we do not really know what to do here...
 		;;
 	esac
