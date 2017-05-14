@@ -45,6 +45,7 @@ conf_cxxt_chk_compiler_and_executor() {
 	conf_cxx_chk_compiler_and_executor
 	if conf__in_help_mode
 		then return 0; fi
+	conf__probe_exe_ext target "$conf_Crosst_tag" conf_Target_exe_ext
 	conf__blare_test 'deciding C++ compiler for target'
 	if test -n "$conf_Crosst_tag" -a -z "$CXX_FOR_TARGET"; then
 		conf__cxxc_find_cross_compiler "$conf_Crosst_tag" \

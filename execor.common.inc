@@ -26,7 +26,8 @@ conf__probe_exe_ext() {
 # program.
 #
 conf__find_execor() {
-	local plat cross_tag prog ld_prefix execor_var execor save_ifs
+	local plat cross_tag prog ld_prefix execor_var \
+	    execor execor1 execor2 save_ifs
 	if test $# != 5
 		then conf__barf 'lolwut?!? $# != 5'; fi
 	plat="$1"
@@ -34,7 +35,8 @@ conf__find_execor() {
 	prog="$3"
 	ld_prefix="$4"
 	execor_var="$5"
-	execor=
+	execor1=
+	execor2=
 	if eval test -n \"\$$execor_var\"; then
 		rm "$prog"
 		return 0
@@ -47,9 +49,9 @@ conf__find_execor() {
 	fi
 	case "$cross_tag" in
 	    i[3456]86-*)
-		execor=qemu-i386;;
+		execor1=qemu-i386;;
 	    armv[45678]* | arm-*)
-		execor=qemu-arm;;
+		execor1=qemu-arm;;
 	    aarch64-* | armeb-* | cris-* | m68k-* | microblaze-* | \
 	    microblazeel-* | mips-* | mips64-* | mips64el-* | mipsel-* | \
 	    mipsn32-* | mipsn32el-* | or32-* | ppc-* | ppc64-* | \
@@ -58,26 +60,25 @@ conf__find_execor() {
 		# the above pattern is not really tested...
 		save_ifs="$IFS"
 		set '--' $cross_tag
-		execor=qemu-"$1"
+		execor1="qemu-$1"
 		IFS="$save_ifs";;
 	    ia16-elf)
-		execor="$conf_Lolwutconf_dir/dosemu-wrapper.sh";;
+		execor1="$conf_Lolwutconf_dir/dosemu-wrapper-1.sh"
+		execor2="$conf_Lolwutconf_dir/dosemu-wrapper-2.sh";;
 	    *)	# OK, we do not really know what to do here...
 		;;
 	esac
-	if $execor ./"$prog" >/dev/null 2>&1; then
-		rm "$prog"
-		eval "$execor_var"='"$execor"'
-		return 0
+	if test -z "$execor2" -a -n "$ld_prefix"; then
+		case "$execor1" in
+		    qemu-*) execor2="$execor1 -L $ld_prefix";;
+		esac
 	fi
-	if test -n "$execor"; then
-		if test -n "$ld_prefix"
-			then execor="$execor -L $ld_prefix"; fi
+	for execor in "$execor1" "$execor2"; do
 		if $execor ./"$prog" >/dev/null 2>&1; then
 			rm "$prog"
 			eval "$execor_var"='"$execor"'
 			return 0
 		fi
-	fi
+	done
 	conf__barf "cannot find command line to run $plat-side program!"
 }

@@ -1,3 +1,18 @@
+2017-05-14	"2 is not equal to 3 -- not even for large values of 2."  (3)
+
+		execor.common.inc :
+		- conf__find_execor() now chooses one of two dosemu wrapper
+		  scripts
+
+		dosemu-wrapper-1.sh :
+		- new; uses `-q' switch in newer (bleeding-edge) dosemu
+
+		dosemu-wrapper-2.sh :
+		- renamed from dosemu-wrapper.sh
+
+		c++.target.inc :
+		- fixed bug: now detects target program name extension
+
 2017-05-01	"2 is not equal to 3 -- not even for large values of 2."  (2)
 
 		execor.common.inc :
