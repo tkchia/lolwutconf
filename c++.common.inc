@@ -324,7 +324,8 @@ conf__cxxc_probe_func() {
 	fi
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
 	    "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"} \
-	    "$templ void conf_foo($proto) { $func($args); }"
+	    "$templ void conf_foo($proto) { $func($args); }" \
+	    "auto conf_bar = &$func;"
 	then    eval $var=yes
 	else    eval $var=no
 	fi

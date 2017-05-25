@@ -1,3 +1,9 @@
+2017-05-25	"2 is not equal to 3 -- not even for large values of 2."  (4)
+
+		c++.common.inc :
+		- conf__cxxc_probe_func() now creates a function pointer to
+		  ensure that the function is defined, not just declared
+
 2017-05-14	"2 is not equal to 3 -- not even for large values of 2."  (3)
 
 		execor.common.inc :
