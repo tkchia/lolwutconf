@@ -184,6 +184,11 @@ conf__cxxc_probe_lbss_fix() {
 	eval "ldflags=\"\$$ldflags_var\""
 	conf__blare_test "checking if __lbss fix is needed for" \
 	    "$plat-side C++ compiler"
+	#
+	# For now, assume that the program will be run within dosemu, and use
+	# the DOS_HELPER_REALLY_EXIT function (int $0xe6, %ax = $0xffff) to
+	# get dosemu to return with an error status (in %bx).
+	#
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
 	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
 	    '#ifndef __ia16__' '#error' '#endif' \
@@ -193,7 +198,7 @@ conf__cxxc_probe_lbss_fix() {
 	    '__attribute__((constructor)) static void pre() {' \
 	    '  char *p = __sbss + 2 * (__lbss - __sbss);' \
 	    '  if (p != __ebss && p - 1 != __ebss) {' \
-	    '    __asm volatile(".byte 0x0f, 0x22, 0xc0" : : "a" (0u));' \
+	    '    __asm volatile("int $0xe6" : : "a" (0xffffu), "b" (1));' \
 	    '    std::abort();' \
 	    '  }' \
 	    '}'
