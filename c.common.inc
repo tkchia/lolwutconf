@@ -183,6 +183,7 @@ conf__cc_probe_lbss_fix() {
 	eval "ldflags=\"\$$ldflags_var\""
 	conf__blare_test "checking if __lbss fix is needed for" \
 	    "$plat-side C compiler"
+	# See c++.common.inc .
 	if conf__cc_chk_compiler_with "$cc" "$cppflags" "$cflags" \
 	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
 	    '#ifndef __ia16__' '#error' '#endif' \
@@ -191,7 +192,7 @@ conf__cc_probe_lbss_fix() {
 	    '__attribute__((constructor)) static void pre() {' \
 	    '  char *p = __sbss + 2 * (__lbss - __sbss);' \
 	    '  if (p != __ebss && p - 1 != __ebss) {' \
-	    '    __asm volatile(".byte 0x0f, 0x22, 0xc0" : : "a" (0u));' \
+	    '    __asm volatile("int $0xe6" : : "a" (0xffffu), "b" (1));' \
 	    '    abort();' \
 	    '  }' \
 	    '}'

@@ -4,6 +4,10 @@
 		- conf__cxxc_probe_lbss_fix() now uses `int $0xe6' to force
 		  an error exit from dosemu
 
+		c.common.inc :
+		- conf__cc_probe_lbss_fix() now uses `int $0xe6' to force
+		  an error exit from dosemu
+
 2017-05-25	"2 is not equal to 3 -- not even for large values of 2."  (4)
 
 		c++.common.inc :
