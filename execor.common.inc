@@ -15,7 +15,7 @@ conf__probe_exe_ext() {
 		then return 0; fi
 	conf__blare_test "deciding program file name extension for $plat"
 	case "$cross_tag" in
-	    ia16-elf)
+	    ia16-elf | ia16-elf,*)
 		eval "$ext_var"=.exe;;
 	    *)	eval "$ext_var"=;;
 	esac
@@ -62,7 +62,7 @@ conf__find_execor() {
 		set '--' $cross_tag
 		execor1="qemu-$1"
 		IFS="$save_ifs";;
-	    ia16-elf)
+	    ia16-elf | ia16-elf,*)
 		execor1="$conf_Lolwutconf_dir/dosemu-wrapper-1.sh"
 		execor2="$conf_Lolwutconf_dir/dosemu-wrapper-2.sh";;
 	    *)	# OK, we do not really know what to do here...

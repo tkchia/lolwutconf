@@ -7,7 +7,7 @@ conf__bfd_chk_strip_with() {
 	prog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	sprog="`conf__mktemp lolwutconf "$conf_Target_exe_ext"`"
 	case "$conf_Crosst_tag" in
-	    ia16-elf)
+	    ia16-elf | ia16-elf,*)
 		save_ldflags="$LDFLAGS_FOR_TARGET"
 		LDFLAGS_FOR_TARGET="$LDFLAGS_FOR_TARGET ` \
 		    `-Wl,--oformat=elf32-i386"
@@ -69,7 +69,7 @@ conf_bfd_chk_strip() {
 	    'target-side programs'
 	if test -z "$STRIP_FOR_TARGET"; then
 		case "$conf_Crosst_tag" in
-		    ia16-elf)
+		    ia16-elf | ia16-elf,*)
 			STRIP_FOR_TARGET="$conf_Lolwutconf_dir/` \
 			    `ia16-elf-strip.pl";;
 		    *)	case "$CC_FOR_TARGET" in

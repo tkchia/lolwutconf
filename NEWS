@@ -7,6 +7,10 @@
 		- now accepts e.g. `arm-linux-gnueabi,armv6' rather than
 		  `armv6-linux-gnueabi'
 
+		bfd.inc ,
+		execor.common.inc :
+		- now handles `ia16-elf,*' platform specifiers
+
 2017-05-27	Fix for possibly redundant __lbss fix in ia16-elf support.
 
 		c++.common.inc :
