@@ -1,3 +1,12 @@
+2017-06-20	Switched to a more flexible way to specify architectures for
+		--host= and --target=.
+
+		configure.inc ,
+		c.common.inc ,
+		c++.common.inc :
+		- now accepts e.g. `arm-linux-gnueabi,armv6' rather than
+		  `armv6-linux-gnueabi'
+
 2017-05-27	Fix for possibly redundant __lbss fix in ia16-elf support.
 
 		c++.common.inc :

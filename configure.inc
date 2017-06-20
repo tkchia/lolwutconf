@@ -198,9 +198,9 @@ conf__help() {
 	conf__blare "      looking for a corresponding 64-bit compiler named"
 	conf__blare "      e.g. x86_64-*-g++, and pass it -m32, -march= flags."
 	conf__blare
-	conf__blare "    - If (platform) is armv4*, armv5*, armv6*, armv7*,"
-	conf__blare "      or armv8*, \`$me' will also look for e.g."
-	conf__blare "      arm-*-g++, and try to use Thumb mode."
+	conf__blare "    - (platform) may be of the form (model),(arch).  Thus"
+	conf__blare "      arm-*,armv6 says to run e.g. the arm-*-g++ compiler"
+	conf__blare "      to produce armv6 code (arm-*-g++ -march=armv6)."
 	conf__blare
 	conf__blare "  * As implied above, instead of specifying --host=,"
 	conf__blare "    you can directly provide compiler settings in"

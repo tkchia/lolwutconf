@@ -41,6 +41,17 @@ conf__cxxc_find_cross_compiler() {
 	cxxflags_var="$3"
 	eval "cxxflags=\"\$$cxxflags_var\""
 	case "$cross_tag" in
+	    *,*)
+		save_ifs="$IFS"
+		IFS=,
+		set '--' $cross_tag
+		IFS="$save_ifs"
+		if test 2 != $#; then
+			conf__barf "bad platform specification $cross_tag"; fi
+		cross_tag="$1"
+		arch="$2"
+		cxx="${cross_tag}-g++"
+		cxxflags="-march=$arch $cxxflags";;
 	    i[3456]86-* | pentium[^4]* | k6-* | athlon-[^f]* | winchip* | \
 	    c3-* | geode-*)
 		if conf__app_exists "${cross_tag}-g++"; then
@@ -69,26 +80,6 @@ conf__cxxc_find_cross_compiler() {
 				cxx="x86_64-$rest-g++"
 			fi
 			cxxflags="-m32 -march=$arch $cxxflags"
-		fi;;
-	    armv[45678]*)
-		if conf__app_exists "${cross_tag}-g++"; then
-			cxx="${cross_tag}-g++"
-		else
-			save_ifs="$IFS"
-			IFS=-
-			set '--' $cross_tag
-			case "$2" in
-			    m | a | r)
-				arch="$1-$2"
-				shift 2;;
-			    *)
-				arch="$1"
-				shift;;
-			esac
-			rest="$*"
-			IFS="$save_ifs"
-			cxx="arm-$rest-g++"
-			cxxflags="-march=$arch $cxxflags"
 		fi;;
 	    *)	cxx="${cross_tag}-g++";;
 	esac
