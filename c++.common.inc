@@ -133,7 +133,7 @@ conf__cxxc_probe_thumb() {
 	conf__blare_test "checking if Thumb mode is relevant for" \
 	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
-	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"} \
 	    '#ifdef __arm__' '#error' '#endif'
 	then	conf__blare_res no
 		return 0
@@ -142,7 +142,7 @@ conf__cxxc_probe_thumb() {
 	conf__blare_test "checking if Thumb mode is already enabled for" \
 	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
-	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"} \
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'
 	then	conf__blare_res yes
 		return 0
@@ -152,6 +152,7 @@ conf__cxxc_probe_thumb() {
 	    "$plat-side C++ compiler"
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" \
 	    "$cxxflags -mthumb" "$ldflags" "$ldlibs" "$execor" "$exeext" \
+	    ${1+"$@"} \
 	    '#if !defined __arm__ || !defined __thumb__' '#error' '#endif'
 	then	cxxflags="$cxxflags -mthumb"
 		eval "$cxxflags_var"='"$cxxflags"'
@@ -181,7 +182,7 @@ conf__cxxc_probe_lbss_fix() {
 	# get dosemu to return with an error status (in %bx).
 	#
 	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
-	    "$ldflags" "$ldlibs" "$execor" "$exeext" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"} \
 	    '#ifndef __ia16__' '#error' '#endif' \
 	    '#include <cstdlib>' \
 	    'extern "C"' \
@@ -200,7 +201,7 @@ conf__cxxc_probe_lbss_fix() {
 		conf__blare_test "checking command to enable __lbss fix" \
 		    "for $plat-side C++ compiler"
 		if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags"\
-		    "$ldflags $goop" "$ldlibs" "$execor" "$exeext"
+		    "$ldflags $goop" "$ldlibs" "$execor" "$exeext" ${1+"$@"}
 		then	ldflags="$ldflags $goop"
 			eval "$ldflags_var"='"$ldflags"'
 			conf__blare_res "$cxx $cppflags $cxxflags $ldflags"
@@ -210,6 +211,43 @@ conf__cxxc_probe_lbss_fix() {
 		conf__blare_res no
 		return 0
 	fi
+}
+
+conf__cxxc_probe_addr_space() {
+	local addr_sp plat cxxc cppflags cxxflags ldflags ldlibs execor \
+	    exeext addr_sp var
+	addr_sp="$1"
+	plat="$2"
+	cxx="$3"
+	cppflags="$4"
+	cxxflags="$5"
+	ldflags="$6"
+	ldlibs="$7"
+	execor="$8"
+	exeext="$9"
+	shift 9
+	var="$1"
+	shift
+	conf__blare_test "checking if $plat-side C++ compiler supports " \
+	    "$addr_sp address space"
+	if conf__cxxc_chk_compiler_with "$cxx" "$cppflags" "$cxxflags" \
+	    "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"} \
+	    'typedef long $as *p_int_t;' \
+	    'typedef short (*p_func_t)($as unsigned * $as);' \
+	    'extern $as int some_var;' \
+	    'extern char $as some_other_var;' \
+	    'int f() { static volatile int $as x = 1; return x; }' \
+	    'int g() { static $as volatile int y = 1; return y; }' && \
+	   conf__not conf__cxxc_chk_compiler_with "$cxx" "$cppflags" \
+	    "$cxxflags" "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"} \
+	    'int f() { volatile int $as x = 1; return x; }' && \
+	   conf__not conf__cxxc_chk_compiler_with "$cxx" "$cppflags" \
+	    "$cxxflags" "$ldflags" "$ldlibs" "$execor" "$exeext" ${1+"$@"} \
+	    'int g() { $as volatile int y = 1; return y; }'
+	then	eval $var=yes
+	else	eval $var=no
+	fi
+	eval conf__blare_res \"\$$var\"
 }
 
 conf__cxxc_probe_opt_wrapper() {

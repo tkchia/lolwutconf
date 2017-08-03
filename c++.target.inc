@@ -147,6 +147,25 @@ conf_cxxt_probe_opt_fwritable_strings() {
 	    conf_Have_cxxt_opt_fwritable_strings
 }
 
+conf_cxxt_probe_addr_space() {
+	local addr_sp var
+	test $# -ne 0
+	conf_cxxt_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	addr_sp="$1"
+	shift
+	var="conf_Have_cxxt_addr_space_`conf__escape "$addr_sp"`"
+	if eval test -n \"\$$var\"
+		then return 0; fi
+	conf__add_var "$var"
+	conf__cxxc_probe_addr_space "$addr_sp" target \
+	    "$conf_Host_exec $CXX_FOR_TARGET" "$CPPFLAGS_FOR_TARGET" \
+	    "$CXXFLAGS_FOR_TARGET" "$LDFLAGS_FOR_TARGET" \
+	    "$LDLIBS_FOR_TARGET" "$conf_Target_exec" "$conf_Target_exe_ext" \
+	    "$var" ${1+"$@"}
+}
+
 conf_cxxt_probe_typ() {
 	local typ var
 	conf_cxxt_chk_compiler_and_executor

@@ -1,3 +1,18 @@
+2017-08-03	C/C++ named address spaces.
+
+		c.common.inc ,
+		c++.common.inc :
+		- added internal functions to check for support for specific
+		  C/C++ named address spaces (N1275)
+		- tweaked internal functions that use conf__{cc, cxxc}_chk_
+		  compiler_with(), to pass remaining arguments
+
+		c++.target.inc :
+		- added conf_cxxt_probe_addr_space()
+
+		configure.inc :
+		- added conf__not()
+
 2017-06-20	Switched to a more flexible way to specify architectures for
 		--host= and --target=.
 

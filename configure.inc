@@ -324,6 +324,13 @@ conf__escape() {
 	done | awk -f "$conf_Lolwutconf_dir/escape.awk"
 }
 
+conf__not() {
+	if ${1+"$@"}
+	then	return 1
+	else	return 0
+	fi
+}
+
 conf_begin() {
 	local opt var
 	conf__check_general_sanity
