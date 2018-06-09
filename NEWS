@@ -1,3 +1,9 @@
+2018-06-09	"If there are epigrams, there must be meta-epigrams."  (3)
+
+		dosemu-wrapper-1.sh :
+		- now no longer uses -q option for dosemu.bin, instead relying
+		  on sed to filter away unneded output; does this work?
+
 2018-03-04	"If there are epigrams, there must be meta-epigrams."  (2)
 
 		c++.target.inc :
