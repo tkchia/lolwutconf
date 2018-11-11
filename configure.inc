@@ -138,7 +138,8 @@ conf__help() {
 	conf__blare "    $me [--srcdir=(dir)] [--prefix=(dir)] \\"
 	conf__blare "        [--host=(platform)] [--host-exec=[(runner)]] \\"
     if test yes = "$conf_Is_canadian_cross"; then
-	conf__blare "        [--host-exe-ext=[(ext)] \\"
+	conf__blare "        [--host-exe-ext=[(ext)] ` \
+				`[--program-suffix=[(ext)] \\"
 	conf__blare "        [--target-prefix=(dir)] [--target=(platform)] \\"
 	conf__blare "        [--target-exec=[(runner)]] ` \
 				`[--target-exe-ext=[(ext)]"
@@ -218,8 +219,9 @@ conf__help() {
 	conf__blare "    look for a corresponding Qemu user-mode emulator,"
 	conf__blare "    e.g. \`qemu-arm'."
 	conf__blare
-	conf__blare "  * --host-exe-ext=(ext) gives a file name extension"
-	conf__blare "    to use for compiled host-side programs, e.g. \`.exe'."
+	conf__blare "  * --host-exe-ext=(ext) or --program-suffix=(ext) gives"
+	conf__blare "    a file name extension to use for compiled host-side"
+	conf__blare "    programs, e.g. \`.exe'."
 	conf__blare
     if test yes = "$conf_Is_canadian_cross"; then
 	conf__blare "  * --target-exec=(runner) specifies a command for"
@@ -365,7 +367,7 @@ conf_begin() {
 			conf_Cross_tag="`echo "$opt" | sed s,^[^=]*=,,`";;
 		    --host-exec=*)
 			conf_Host_exec="`echo "$opt" | sed s,^[^=]*=,,`";;
-		    --host-exe-ext=*)
+		    --host-exe-ext=* | --program-suffix=*)
 			conf_Host_exe_ext="`echo "$opt" | sed s,^[^=]*=,,`";;
 		    --target-prefix=?*)
 			conf_Target_prefix="`echo "$opt" | sed s,^[^=]*=,,`";;

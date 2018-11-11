@@ -1,3 +1,8 @@
+2018-11-11	"It may be slow, but it's hard to use."
+
+		configure.inc :
+		- recognize --program-suffix= as a synonym of --host-exe-ext=
+
 2018-06-09	"If there are epigrams, there must be meta-epigrams."  (3)
 
 		dosemu-wrapper-1.sh :
