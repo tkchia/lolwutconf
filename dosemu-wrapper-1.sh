@@ -3,8 +3,10 @@ libdir="`which dosemu.bin | xargs dirname`"/../share/dosemu
 if test -f "$libdir"/commands/dosemu/exitemu.com; then
 	dosemu.bin --Flibdir "$libdir" \
 	    -I 'video {none} keyboard {layout us}' -p -K ${1+"$@"} \
-	    </dev/null 2>/dev/null
+	    </dev/null 2>/dev/null | \
+	    sed -n '1,/Execute : / ! p'
 else
 	dosemu.bin -I 'video {none} keyboard {layout us}' -p -K ${1+"$@"} \
-	    </dev/null 2>/dev/null
+	    </dev/null 2>/dev/null | \
+	    sed -n '1,/Execute : / ! p'
 fi

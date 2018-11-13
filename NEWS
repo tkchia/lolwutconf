@@ -1,3 +1,8 @@
+2018-11-13	"It may be slow, but it's hard to use."  (3)
+
+		dosemu-wrapper-1.sh :
+		- it seems we still need sed
+
 2018-11-12	"It may be slow, but it's hard to use."  (2)
 
 		dosemu-wrapper-1.sh :
