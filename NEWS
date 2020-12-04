@@ -1,3 +1,8 @@
+2020-12-04	General C macro testing.
+
+		c.inc :
+		- added conf_c_probe_macro() and conf_c_chk_macro()
+
 2018-11-18	"It may be slow, but it's hard to use."  (4)
 
 		dosemu-wrapper-1.sh ,

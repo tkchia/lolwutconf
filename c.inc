@@ -265,3 +265,32 @@ conf_c_probe_endianness() {
 	rm -f "$prog"
 	conf__blare_res "$conf_Endianness_c"
 }
+
+conf_c_probe_macro() {
+	local macro var
+	conf_c_chk_compiler_and_executor
+	if conf__in_help_mode
+		then return 0; fi
+	macro="$1"
+	shift
+	var="conf_Have_c_macro_`conf__escape "$macro"`"
+	conf__add_var "$var"
+	conf__blare_test "testing for host-side C macro $macro"
+	if conf__c_chk_compiler_with "$CFLAGS" "$LDLIBS" ${1+"$@"} \
+	    "#ifndef $macro" "#error" "#endif"
+	then    eval $var=yes
+	else    eval $var=no
+	fi
+	eval conf__blare_res \"\$$var\"
+}
+
+conf_c_chk_macro() {
+	local var macro
+	macro="$1"
+	conf_c_probe_macro ${1+"$@"}
+	if conf__in_help_mode
+		then return 0; fi
+	var="conf_Have_c_macro_`conf__escape "$macro"`"
+	if eval test yes = \"\$$var\"; then :; else
+		conf__barf "macro $1 not found host-side!"; fi
+}
