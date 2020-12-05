@@ -200,6 +200,58 @@ conf_c_probe_lib() {
 	done
 }
 
+conf_c_probe_lib_path() {
+	local family libs lib file path base dir foo
+	conf_c_probe_lib ${1+"$@"}
+	if conf__in_help_mode
+		then return 0; fi
+	family="$1"
+	libs="$2"
+	var="conf_Have_c_lib_`conf__escape "$family"`"
+	if eval test yes = \"\$$var\"; then
+		var="conf_Path_c_lib_`conf__escape "$family"`"
+		if eval test -n \"\$$var\"
+			then return 0; fi
+		conf__add_var "$var"
+		path=
+		foo=
+		for lib in $libs; do
+			if test -n "$path"
+				then continue; fi
+			if test -n "$foo"
+			then	foo="$foo, $lib"
+			else	foo="$lib"
+			fi
+			conf__blare_test "finding path of" \
+					 "host-side C library -l$lib"
+			for file in lib"$lib".so lib"$lib".a; do
+				if test -n "$path"
+					then continue; fi
+				path="`$CC $CPPFLAGS $CFLAGS $LDFLAGS $LDLIBS \
+				    -print-file-name="$file"`"
+				case "$path" in
+				    */*)
+					base="`basename "$path"`"
+					dir="`dirname "$path"`"
+					dir="`cd "$dir" && pwd`"
+					case "$dir" in
+					    */)  path="$dir$base";;
+					    */*) path="$dir/$base";;
+					    *)	 path==;;
+					esac;;
+				    *)	path=;;
+				esac
+			done
+			conf__blare_res "${path:-(not found)}"
+		done
+		if test -z "$path"; then
+			conf__barf "cannot figure out path of" \
+				   "any of the libraries {$foo}!"
+		fi
+		eval $var='"$path"'
+	fi
+}
+
 conf_c_chk_lib() {
 	local family libs foo lib
 	family="$1"
@@ -293,4 +345,20 @@ conf_c_chk_macro() {
 	var="conf_Have_c_macro_`conf__escape "$macro"`"
 	if eval test yes = \"\$$var\"; then :; else
 		conf__barf "macro $1 not found host-side!"; fi
+}
+
+conf_c_find_cross_tool() {
+	local tool_var tool_base
+	tool_var="$1"
+	tool_base="$2"
+	conf__add_var "$tool_var"
+	if conf__in_help_mode
+		then return 0; fi
+	if eval test -z \"\$$tool_var\"; then
+		conf__blare_test "deciding build $tool_base tool"
+		conf__cc_find_cross_tool "$conf_Cross_tag" "$tool_var" \
+		    "$tool_base"
+		eval conf__blare_res \"\$$tool_var\"
+		eval conf_appb_chk_exists \"\$$tool_var\"
+	fi
 }

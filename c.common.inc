@@ -87,6 +87,57 @@ conf__cc_find_cross_compiler() {
 	eval "$cflags_var"='"$cflags"'
 }
 
+conf__cc_find_cross_tool() {
+	local cross_tag tool_var tool_base tool save_ifs arch
+	if test $# != 3
+		then conf__barf 'lolwut?!? $# != 3'; fi
+	cross_tag="$1"
+	tool_var="$2"
+	tool_base="$3"
+	case "$cross_tag" in
+	    '')	tool="$tool_base";;
+	    *,*)
+		save_ifs="$IFS"
+		IFS=,
+		set '--' $cross_tag
+		IFS="$save_ifs"
+		if test 2 != $#; then
+			conf__barf "bad platform specification $cross_tag"; fi
+		cross_tag="$1"
+		tool="${cross_tag}-${tool_base}";;
+	    i[3456]86-* | pentium[^4]* | k6-* | athlon-[^f]* | winchip* | \
+	    c3-* | geode-*)
+		if conf__app_exists "${cross_tag}-${tool_base}"; then
+			tool="${cross_tag}-${tool_base}"
+		else
+			save_ifs="$IFS"
+			IFS=-
+			set '--' $cross_tag
+			case "$1-$2" in
+			    pentium-mmx | pentium-m | k6-[23] | \
+			    athlon-tbird | athlon-4 | athlon-[xm]p | \
+			    winchip-c6 | c3-2)
+				arch="$1-$2"
+				shift 2;;
+			    *)
+				arch="$1"
+				shift;;
+			esac
+			rest="$*"
+			IFS="$save_ifs"
+			if conf__app_exists "i686-$rest-$tool_base"; then
+				tool="i686-$rest-$tool_base"
+			elif conf__app_exists "i386-$rest-$tool_base"; then
+				tool="i386-$rest-$tool_base"
+			else
+				tool="x86_64-$rest-$tool_base"
+			fi
+		fi;;
+	    *)	tool="${cross_tag}-${tool_base}";;
+	esac
+	eval "$tool_var"='"$tool"'
+}
+
 conf__cc_find_execor() {
 	local plat cross_tag cc cppflags cflags ldflags ldlibs exeext \
 	    execor_var save_ifs ld_prefix

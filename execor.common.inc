@@ -5,7 +5,7 @@
 conf__probe_exe_ext() {
 	local plat cross_tag ext ext_var
 	if test $# != 3
-		then conf__barf 'lolwut?!? $% != 5'; fi
+		then conf__barf 'lolwut?!? $# != 3'; fi
 	if conf__in_help_mode
 		then return 0; fi
 	plat="$1"

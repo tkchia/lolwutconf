@@ -32,8 +32,8 @@ conf__app_exists() {
 
 conf__check_general_sanity() {
 	local app
-	for app in : awk basename chmod cp dirname echo grep ln mv pwd rm \
-	    strings seq test type; do
+	for app in : awk basename chmod cp dirname echo grep ln make mv pwd \
+	    rm strings seq test type; do
 		if conf__app_exists "$app"; then :; else
 			conf__barf "command line program \`$app' not found!"
 		fi
@@ -256,11 +256,11 @@ conf__find_good_runtime_prefix() {
 		# available, so do this nasty thang...
 		#
 		prefix="`$gnu $gnuflags $arg`"
-		prefix="`echo "$prefix" | xargs dirname`"
+		prefix="`dirname "$prefix"`"
 		prefix="`cd "$prefix" && pwd`"
 		case "$prefix" in
 		    */lib)
-			prefix="`echo "$prefix" | xargs dirname`"
+			prefix="`dirname "$prefix"`"
 			if test -z "$good_prefix" -o \
 			    ${#prefix} -lt ${#good_prefix}
 				then good_prefix="$prefix"; fi;;

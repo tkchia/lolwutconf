@@ -1,3 +1,20 @@
+2020-12-05	UEFI stuff.
+		
+		c.common.inc :
+		- added conf__cc_find_cross_tool()
+
+		c.inc :
+		- added conf_c_probe_lib_path() and conf_c_find_cross_tool()
+
+		b/configure.inc :
+		- now looks for a `make' utility
+
+		execor.common.inc :
+		- fixed typo
+
+		efi.inc :
+		- initial version
+
 2020-12-04	General C macro testing.
 
 		c.inc :
