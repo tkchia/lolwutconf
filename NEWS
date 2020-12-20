@@ -1,3 +1,11 @@
+2020-12-20	UEFI & Git stuff.
+
+		efi.inc :
+		- minor tweak
+
+		versioning.inc :
+		- initial version
+		
 2020-12-05	UEFI stuff.
 		
 		c.common.inc :

@@ -7,9 +7,9 @@ conf_efi_sdk_gnuefi() {
 	conf_c_chk_lib efi efi
 	conf_c_chk_lib gnuefi gnuefi
 	conf_c_probe_lib_path efi efi
+	conf__add_var CPPFLAGS conf_Gnuefi_dir conf_Gnuefi_arch
 	if conf__in_help_mode
 		then return 0; fi
-	conf__add_var CPPFLAGS conf_Gnuefi_dir conf_Gnuefi_arch
 	conf_Gnuefi_dir="`dirname "$conf_Path_c_lib_efi"`"
 	conf_Gnuefi_dir="`dirname "$conf_Gnuefi_dir"`"
 	CPPFLAGS="-I$conf_Gnuefi_dir/include/efi ` \
