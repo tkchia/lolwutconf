@@ -1,3 +1,16 @@
+2020-12-23	Now under GNU GPL v2 or above; changed versioning.inc API
+
+		LICENSE :
+		- changed to GNU GPL v2
+
+		versioning.inc :
+		- conf_versioning_use_git_date() now needs a package name
+		  parameter
+		- added license notice
+
+		* :
+		- added license notice
+
 2020-12-20	UEFI & Git stuff.
 
 		efi.inc :
